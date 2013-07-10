@@ -1,16 +1,18 @@
 #pragma once
 #include "Types.hpp"
+#include "LispState.hpp"
 #include <string>
 namespace Lazy{
-        #define EVAL_ARGS
+        #define EVAL_ARGS LispState* ls, SExpression* se
 
 
         class SExpression{
         public:
                 virtual ~SExpression(){}
                 virtual SExpression* Evaluate(EVAL_ARGS/*some args here, context and etc | TODO*/) = 0;
-                virtual Type type();
+                virtual Type type() = 0;
         };
+        SExpression* eval(LispState*, SExpression*);
 
         class Quot: public SExpression{
                 SExpression* value;
@@ -61,8 +63,15 @@ namespace Lazy{
         public:
                 virtual ~DottedPair(){}
                 DottedPair(decltype(value) value = nullptr, decltype(next) next = nullptr):value(value),next(next){}
+                static DottedPair* make(decltype(value) value, decltype(value) next){
+                        return new DottedPair(value, new DottedPair(next,nullptr));
+                }
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override { /*TODO func call.*/ return nullptr; }
+                static DottedPair* make(decltype(value) value, decltype(next) next){
+                        return new DottedPair(value,next);
+                }
+
+                virtual SExpression* Evaluate(EVAL_ARGS) override { /*TODO func call.*/ return eval(ls,this); }
                 virtual Type type() override { return Type::DOT; }
                 decltype(value)& get() { return value; }
                 SExpression* car() { return value; }
@@ -86,29 +95,35 @@ namespace Lazy{
         };
 
         class Variable: public SExpression{
-                SExpression * value;
         public:
+                const std::string name;
                 virtual ~Variable(){}
-                Variable(SExpression* value =nullptr):value(value){}
+                Variable(const std::string& name):name(name){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override { return value->Evaluate(); }
+                virtual SExpression* Evaluate(EVAL_ARGS) override { return ls->getVariable(name); }
                 virtual Type type() override { return Type::VARIABLE; }
-                decltype(value)& get() { return value; }
-                Variable * set(SExpression* value){ this->value = value; return this;}
         };
         
         class Constant: public SExpression{
-                SExpression * value;
         public:
+                const std::string name;
                 virtual ~Constant(){}
-                Constant(SExpression* value = nullptr):value(value){}
+                Constant(const std::string& name):name(name){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override { return value->Evaluate(); }
+                virtual SExpression* Evaluate(EVAL_ARGS) override { return ls->getVariable(name); }
                 virtual Type type() override { return Type::CONSTANT; }
-                decltype(value)& get() { return value; }
         };
 
+        class Subroutine: public SExpression{
+                SExpression* (*fun)(LispState*, SExpression*);
+        public:
+                using subr = SExpression* (*)(LispState*,SExpression*);
+                virtual ~Subroutine(){}
+                Subroutine(subr fun):fun(fun){}
 
+                virtual SExpression* Evaluate(EVAL_ARGS) override {return fun(ls,se);}
+                virtual Type type() override { return Type::SUBR; }
+        };
 
 
 }

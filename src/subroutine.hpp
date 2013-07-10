@@ -3,9 +3,9 @@
 namespace Lazy{
         static Boolean const ltrue (true);
         static Boolean const lfalse (false);
-        DottedPair* cons(SExpression* lhs, SExpression * rhs) {
-                lhs = lhs?lhs->Evaluate():nullptr;
-                rhs = rhs?rhs->Evaluate():nullptr;
+        DottedPair* cons(LispState*ls,SExpression* lhs, SExpression * rhs) {
+                lhs = lhs?lhs->Evaluate(ls,nullptr):nullptr;
+                rhs = rhs?rhs->Evaluate(ls,nullptr):nullptr;
                 if(!rhs){
                         return new DottedPair(lhs);
                 }
@@ -51,4 +51,25 @@ namespace Lazy{
                 if(!lhs || lhs->type() == Type::NIL)return &ltrue;
                 return &lfalse;
         }
+        #define OP_MACRO(name,op,res) \
+        res * name(LispState * ls,SExpression* lhs, SExpression* rhs){\
+                if(!lhs || !rhs)\
+                        return nullptr;\
+                lhs = lhs->Evaluate(ls,nullptr);\
+                rhs = rhs->Evaluate(ls,nullptr);\
+                if(lhs->type()!=rhs->type() || lhs->type()!=Type::NUMBER)\
+                        return nullptr;\
+                return new res(static_cast<Number*>(lhs)->get() op static_cast<Number*>(rhs)->get());\
+        }
+        OP_MACRO(add,+,Number);
+        OP_MACRO(sub,-,Number);
+        OP_MACRO(div,/,Number);
+        OP_MACRO(mul,*,Number);
+        OP_MACRO(ge_num,>=,Boolean);
+        OP_MACRO(le_num,<=,Boolean);
+        OP_MACRO(lt_num,<,Boolean);
+        OP_MACRO(gt_num,>,Boolean);
+        OP_MACRO(neq_num,!=,Boolean);
+        OP_MACRO(qe_num,==,Boolean);
+        #undef OP_MACRO
 }
