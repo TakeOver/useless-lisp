@@ -25,7 +25,7 @@ SEMICOLON       ";"
 DOT             "."
 TRUE            "#t"
 FALSE           "#f"
-
+QUOT            "'"
 NUMBER          [0-9]+
 WS              [ \r\n\t\f\v]+
 ANY             [a-zA-Z\+\-\*\/\$\%\^\&\!\?\,\~\:]+
@@ -40,6 +40,7 @@ ANY             [a-zA-Z\+\-\*\/\$\%\^\&\!\?\,\~\:]+
 {LPAREN}        { return TOKEN_LPAREN; }
 {RPAREN}        { return TOKEN_RPAREN; }
 {DOT}           { return TOKEN_DOT;}
+{QUOT}          { return TOKEN_QUOT;}
 .               {  }
  
 %%

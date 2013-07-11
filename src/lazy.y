@@ -35,7 +35,7 @@ int yyerror(std::vector<SExpression*>*,yyscan_t scanner, const char *msg){
 %token TOKEN_LPAREN
 %token TOKEN_RPAREN
 %token TOKEN_NUMBER
-%token ATOM TOKEN_DOT TOKEN_TRUE TOKEN_FALSE
+%token ATOM TOKEN_DOT TOKEN_TRUE TOKEN_FALSE TOKEN_QUOT
 %type<expr> S_value
 %type<expr> S_expr listnone
 %type<expr> quot list list_args// dot_pair
@@ -61,7 +61,7 @@ S_value:        ATOM            { $$ = new Variable(*$1); }
 ;
 //dot_pair: TOKEN_LPAREN S_value TOKEN_DOT S_value TOKEN_RPAREN { $$= dot($2,$4);}
 //;
-quot: '`' S_value { $$ = new Quot($2);}
+quot: TOKEN_QUOT S_value { $$ = new Quot($2);}
 ;
 listnone: TOKEN_LPAREN TOKEN_RPAREN { $$ = new DottedPair(nullptr,nullptr); }
 list: TOKEN_LPAREN list_args TOKEN_RPAREN {$$ = $2; }

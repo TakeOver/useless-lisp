@@ -338,7 +338,7 @@ extern int yylex \
 #undef YY_DECL
 #endif
 
-#line 45 "lazy.l"
+#line 46 "lazy.l"
 
 
 #line 345 "Lexer.h"

@@ -11,6 +11,7 @@ namespace Lazy{
         class LispState{
                 std::unordered_map<std::string, VarRef*> globals;
                 LispState * parent;
+                bool passive;
         public:
                 void debugLocals(){
                         std::cout << "`( locals ";
@@ -19,27 +20,37 @@ namespace Lazy{
                         }
                         std::cout << ")\n";
                 }
-                LispState(LispState * parent = nullptr):parent(parent){}
+                void setPassive(){ passive = true; }
+                LispState(LispState * parent = nullptr, bool passive = false):parent(parent),passive(passive){}
                 VarRef* getVariable(const std::string&name){
                         if(!contains(globals,name)){
-                                return parent?parent->getVariable(name):nullptr;
+                                if(parent)
+                                        return parent->getVariable(name);
+                                return nullptr;
                         } 
-                        return globals[name]?globals[name]:nullptr; 
+                        return globals[name]; 
                 }
-                void setVariable(const std::string& name, SExpression* se, bool create = false){ 
-                        if(contains(globals,name) || create){
+                void setVariable(const std::string& name, SExpression* se, bool create = false){
+                        if(passive && parent){
+                                std::cerr << "Writing " << name << " from passive\n";
+                                parent->setVariable(name, se,create);
+                                return;
+                        } 
+                        if(contains(globals,name) || (create)){
                                 if(!globals[name])
                                         globals[name] = new VarRef(se);
                                 else if(globals[name]->mut) 
                                         globals[name]->ref = se;
-                                else { /*error*/ }
+                                else { /*error*/
+                                        perror(("Variable:" + name + " is constant.\n").c_str());
+                                }
                                 return;
                         }
-                        if(parent && ! parent->getVariable(name)){ 
+                        if((!parent || !parent->getVariable(name))){ 
                                 globals[name]=new VarRef(se); 
                                 return;
                         }
-                        {/*error*/} 
+                        parent->setVariable(name, se);
                 }
         };
 }

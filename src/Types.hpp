@@ -8,6 +8,7 @@ namespace Lazy{
                 DOT,
                 SUBR,
                 EXPR,
+                FEXPR,
                 MACRO,
                 VARIABLE,
                 BOOLEAN

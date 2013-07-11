@@ -130,7 +130,8 @@ extern int yydebug;
      ATOM = 261,
      TOKEN_DOT = 262,
      TOKEN_TRUE = 263,
-     TOKEN_FALSE = 264
+     TOKEN_FALSE = 264,
+     TOKEN_QUOT = 265
    };
 #endif
 
@@ -146,7 +147,7 @@ typedef union YYSTYPE
 
 
 /* Line 350 of yacc.c  */
-#line 150 "Parser.c"
+#line 151 "Parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -173,7 +174,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 353 of yacc.c  */
-#line 177 "Parser.c"
+#line 178 "Parser.c"
 
 #ifdef short
 # undef short
@@ -406,7 +407,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   264
+#define YYMAXUTOK   265
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -423,7 +424,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,    10,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -440,7 +441,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9
+       5,     6,     7,     8,     9,    10
 };
 
 #if YYDEBUG
@@ -475,9 +476,9 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "TOKEN_LPAREN", "TOKEN_RPAREN",
-  "TOKEN_NUMBER", "ATOM", "TOKEN_DOT", "TOKEN_TRUE", "TOKEN_FALSE", "'`'",
-  "$accept", "prog", "S_expr", "S_value", "quot", "listnone", "list",
-  "list_args", YY_NULL
+  "TOKEN_NUMBER", "ATOM", "TOKEN_DOT", "TOKEN_TRUE", "TOKEN_FALSE",
+  "TOKEN_QUOT", "$accept", "prog", "S_expr", "S_value", "quot", "listnone",
+  "list", "list_args", YY_NULL
 };
 #endif
 
@@ -487,7 +488,7 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-      96
+     265
 };
 # endif
 
@@ -1494,7 +1495,7 @@ yyreduce:
 
 
 /* Line 1787 of yacc.c  */
-#line 1498 "Parser.c"
+#line 1499 "Parser.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

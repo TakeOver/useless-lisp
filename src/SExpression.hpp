@@ -118,13 +118,118 @@ namespace Lazy{
 
         class Expression: public SExpression{
                 DottedPair* func;
+                DottedPair* args;
                 LispState *ctx;
         public:
                 virtual ~Expression(){}
-                Expression(DottedPair *func, LispState* ctx):func(func),ctx(ctx){}
+                Expression(DottedPair *func,DottedPair* args, LispState* ctx=nullptr):func(func),args(args),ctx(ctx){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override {auto t= eval(ls=new LispState(ctx),func);delete ls;return t;}
+                virtual SExpression* Evaluate(EVAL_ARGS) override {
+                        LispState * state = new LispState(ctx);
+                        if(!se || se->type()!=Type::DOT){
+                                perror("DottedPair expected as func asrgs list\n");
+                                return nullptr;
+                        }
+                        auto iter = args, arge = (DottedPair*)se;
+                        while(iter){
+                                if(!arge){
+                                        perror("Number of arguments mismath in Expression call(lesser)\n");
+                                        delete state;
+                                        return nullptr;
+                                }
+                                if(iter->car()->type()!=Type::VARIABLE){
+                                        perror("Variable expected as function param\n");
+                                        return nullptr;
+                                }
+                                state->setVariable(((Variable*)iter->car())->name,eval(ls,arge->car()),true);
+                                iter = iter->cdr();
+                                arge = arge->cdr();
+                        }
+                        if(arge){
+                                perror("Number of arguments mismath in Expression call(greater)\n");
+                                delete state;
+                                return nullptr;
+                        }
+                        return eval(state,func);
+                }
                 virtual Type type() override { return Type::EXPR; }
+        };
+        class FExpression: public SExpression{
+                DottedPair* func;
+                DottedPair* args;
+                LispState *ctx;
+        public:
+                virtual ~FExpression(){}
+                FExpression(DottedPair *func,DottedPair* args, LispState* ctx=nullptr):func(func),args(args),ctx(ctx){}
+
+                virtual SExpression* Evaluate(EVAL_ARGS) override {
+                        LispState * state = new LispState(ctx);
+                        if(se->type()!=Type::DOT){
+                                perror("DottedPair expected as func asrgs list\n");
+                                return nullptr;
+                        }
+                        auto iter = args, arge = (DottedPair*)se;
+                        while(iter){
+                                if(!arge){
+                                        perror("Number of arguments mismath in FExpression call(lesser)\n");
+                                        delete state;
+                                        return nullptr;
+                                }
+                                if(!iter->car() || iter->car()->type()!=Type::VARIABLE){
+                                        perror("Variable expected as function param\n");
+                                        return nullptr;
+                                }
+                                state->setVariable(((Variable*)iter->car())->name,(arge->car()),true);
+                                iter = iter->cdr();
+                                arge = arge->cdr();
+                        }
+                        if(arge){
+                                perror("Number of arguments mismath in FExpression call(greater)\n");
+                                delete state;
+                                return nullptr;
+                        }
+                        return eval(state,func);
+                }
+                virtual Type type() override { return Type::FEXPR; }
+        };
+
+        class Macro: public SExpression{
+                DottedPair* func;
+                DottedPair* args;
+        public:
+                virtual ~Macro(){}
+                Macro(DottedPair *func,DottedPair* args):func(func),args(args){}
+
+                virtual SExpression* Evaluate(EVAL_ARGS) override {
+                        LispState * state = new LispState(ls);
+                        if(!se || se->type()!=Type::DOT){
+                                perror("DottedPair expected as Macro args list\n");
+                                return nullptr;
+                        }
+                        auto iter = args, arge = (DottedPair*)se;
+                        while(iter){
+                                if(!arge){
+                                        perror("Number of arguments mismath in Macro call(lesser)\n");
+                                        return nullptr;
+                                }
+                                if(!iter->car() || iter->car()->type()!=Type::VARIABLE){
+                                        perror("Variable expected as macro param\n");
+                                        delete state;
+                                        return nullptr;
+                                }
+                                state->setVariable(((Variable*)iter->car())->name,(arge->car()),true);
+                                iter = iter->cdr();
+                                arge = arge->cdr();
+                        }
+                        if(arge){
+                                perror("Number of arguments mismath in Macro call(greater)\n");
+                                delete state;
+                                return nullptr;
+                        }
+                        state->setPassive();
+                        return eval(state,func);
+                }
+                virtual Type type() override { return Type::MACRO; }
         };
 
 

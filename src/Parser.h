@@ -64,7 +64,8 @@ extern int yydebug;
      ATOM = 261,
      TOKEN_DOT = 262,
      TOKEN_TRUE = 263,
-     TOKEN_FALSE = 264
+     TOKEN_FALSE = 264,
+     TOKEN_QUOT = 265
    };
 #endif
 
@@ -80,7 +81,7 @@ typedef union YYSTYPE
 
 
 /* Line 2049 of yacc.c  */
-#line 84 "Parser.h"
+#line 85 "Parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

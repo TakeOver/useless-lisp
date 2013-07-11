@@ -1,0 +1,7 @@
+(var a 10)
+(var b (- a 10))
+(print (* a (- b a)))
+(var defmacro (macro (name args body) (var! name (macro! args body))))
+(var def (macro (name args body) (var! name (lambda! args body))))
+(var deff (macro (name args body) (var! name (flabmda! args body))))
+(defmacro let (a b) (var! a b)
