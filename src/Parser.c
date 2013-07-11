@@ -66,18 +66,17 @@
 #line 1 "lazy.y"
 
 #include "utils.hpp"
+#include <vector>
    using namespace Lazy;
 #include "Parser.h"
 #include "Lexer.h"
-int yyerror(yyscan_t scanner, const char *msg){
+int yyerror(std::vector<SExpression*>*,yyscan_t scanner, const char *msg){
         printf("Error:%s\n",msg);
         return 0;
-}
-        LispState * ls;
-SExpression * res = nullptr; 
+} 
 
 /* Line 336 of yacc.c  */
-#line 81 "Parser.c"
+#line 80 "Parser.c"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -108,7 +107,7 @@ extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
 /* Line 350 of yacc.c  */
-#line 14 "lazy.y"
+#line 13 "lazy.y"
  
         #ifndef YY_TYPEDEF_YY_SCANNER_T
                 #define YY_TYPEDEF_YY_SCANNER_T
@@ -117,7 +116,7 @@ extern int yydebug;
 
 
 /* Line 350 of yacc.c  */
-#line 121 "Parser.c"
+#line 120 "Parser.c"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -140,14 +139,14 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 350 of yacc.c  */
-#line 29 "lazy.y"
+#line 30 "lazy.y"
 
    Lazy::SExpression * expr;
    std::string* str;
 
 
 /* Line 350 of yacc.c  */
-#line 151 "Parser.c"
+#line 150 "Parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -163,7 +162,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (yyscan_t scanner);
+int yyparse (std::vector<Lazy::SExpression*> *expression, yyscan_t scanner);
 #else
 int yyparse ();
 #endif
@@ -174,7 +173,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 353 of yacc.c  */
-#line 178 "Parser.c"
+#line 177 "Parser.c"
 
 #ifdef short
 # undef short
@@ -465,8 +464,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    44,    44,    46,    49,    50,    52,    53,    55,    56,
-      57,    58,    62,    64,    66,    67
+       0,    45,    45,    46,    47,    50,    53,    54,    56,    57,
+      58,    59,    63,    65,    67,    68
 };
 #endif
 
@@ -606,7 +605,7 @@ do                                                              \
     }                                                           \
   else                                                          \
     {                                                           \
-      yyerror (scanner, YY_("syntax error: cannot back up")); \
+      yyerror (expression, scanner, YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
@@ -678,7 +677,7 @@ do {									  \
     {									  \
       YYFPRINTF (stderr, "%s ", Title);					  \
       yy_symbol_print (stderr,						  \
-		  Type, Value, scanner); \
+		  Type, Value, expression, scanner); \
       YYFPRINTF (stderr, "\n");						  \
     }									  \
 } while (YYID (0))
@@ -692,13 +691,14 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, yyscan_t scanner)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, std::vector<Lazy::SExpression*> *expression, yyscan_t scanner)
 #else
 static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner)
+yy_symbol_value_print (yyoutput, yytype, yyvaluep, expression, scanner)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
+    std::vector<Lazy::SExpression*> *expression;
     yyscan_t scanner;
 #endif
 {
@@ -706,6 +706,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner)
   YYUSE (yyo);
   if (!yyvaluep)
     return;
+  YYUSE (expression);
   YYUSE (scanner);
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
@@ -728,13 +729,14 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, yyscan_t scanner)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, std::vector<Lazy::SExpression*> *expression, yyscan_t scanner)
 #else
 static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, scanner)
+yy_symbol_print (yyoutput, yytype, yyvaluep, expression, scanner)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
+    std::vector<Lazy::SExpression*> *expression;
     yyscan_t scanner;
 #endif
 {
@@ -743,7 +745,7 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, scanner)
   else
     YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, expression, scanner);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -786,12 +788,13 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule, yyscan_t scanner)
+yy_reduce_print (YYSTYPE *yyvsp, int yyrule, std::vector<Lazy::SExpression*> *expression, yyscan_t scanner)
 #else
 static void
-yy_reduce_print (yyvsp, yyrule, scanner)
+yy_reduce_print (yyvsp, yyrule, expression, scanner)
     YYSTYPE *yyvsp;
     int yyrule;
+    std::vector<Lazy::SExpression*> *expression;
     yyscan_t scanner;
 #endif
 {
@@ -806,7 +809,7 @@ yy_reduce_print (yyvsp, yyrule, scanner)
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       , scanner);
+		       		       , expression, scanner);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -814,7 +817,7 @@ yy_reduce_print (yyvsp, yyrule, scanner)
 # define YY_REDUCE_PRINT(Rule)		\
 do {					\
   if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule, scanner); \
+    yy_reduce_print (yyvsp, Rule, expression, scanner); \
 } while (YYID (0))
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1091,17 +1094,19 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, yyscan_t scanner)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, std::vector<Lazy::SExpression*> *expression, yyscan_t scanner)
 #else
 static void
-yydestruct (yymsg, yytype, yyvaluep, scanner)
+yydestruct (yymsg, yytype, yyvaluep, expression, scanner)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
+    std::vector<Lazy::SExpression*> *expression;
     yyscan_t scanner;
 #endif
 {
   YYUSE (yyvaluep);
+  YYUSE (expression);
   YYUSE (scanner);
 
   if (!yymsg)
@@ -1137,10 +1142,11 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (yyscan_t scanner)
+yyparse (std::vector<Lazy::SExpression*> *expression, yyscan_t scanner)
 #else
 int
-yyparse (scanner)
+yyparse (expression, scanner)
+    std::vector<Lazy::SExpression*> *expression;
     yyscan_t scanner;
 #endif
 #endif
@@ -1394,19 +1400,14 @@ yyreduce:
     {
         case 2:
 /* Line 1787 of yacc.c  */
-#line 44 "lazy.y"
-    { res = (yyvsp[(1) - (1)].expr); (yyval.expr) = (yyvsp[(1) - (1)].expr);
-        eval(ls,res);
-}
+#line 45 "lazy.y"
+    { expression->push_back((yyvsp[(1) - (1)].expr));}
     break;
 
   case 3:
 /* Line 1787 of yacc.c  */
 #line 46 "lazy.y"
-    {
-        res = (yyvsp[(2) - (2)].expr); (yyval.expr) = (yyvsp[(2) - (2)].expr);
-        eval(ls,res);
-    }
+    { expression->push_back((yyvsp[(2) - (2)].expr));}
     break;
 
   case 5:
@@ -1417,67 +1418,67 @@ yyreduce:
 
   case 6:
 /* Line 1787 of yacc.c  */
-#line 52 "lazy.y"
+#line 53 "lazy.y"
     {(yyval.expr)=new Variable(*(yyvsp[(1) - (1)].str));}
     break;
 
   case 7:
 /* Line 1787 of yacc.c  */
-#line 53 "lazy.y"
+#line 54 "lazy.y"
     { (yyval.expr) = num(strtold((yyvsp[(1) - (1)].str)->c_str(),nullptr));}
     break;
 
   case 8:
 /* Line 1787 of yacc.c  */
-#line 55 "lazy.y"
+#line 56 "lazy.y"
     {(yyval.expr)=(yyvsp[(1) - (1)].expr);}
     break;
 
   case 9:
 /* Line 1787 of yacc.c  */
-#line 56 "lazy.y"
+#line 57 "lazy.y"
     {(yyval.expr)=(yyvsp[(1) - (1)].expr);}
     break;
 
   case 10:
 /* Line 1787 of yacc.c  */
-#line 57 "lazy.y"
+#line 58 "lazy.y"
     { (yyval.expr) = new Boolean(true);}
     break;
 
   case 11:
 /* Line 1787 of yacc.c  */
-#line 58 "lazy.y"
+#line 59 "lazy.y"
     { (yyval.expr) = new Boolean(false);}
     break;
 
   case 12:
 /* Line 1787 of yacc.c  */
-#line 62 "lazy.y"
+#line 63 "lazy.y"
     { (yyval.expr) = new Quot((yyvsp[(2) - (2)].expr));}
     break;
 
   case 13:
 /* Line 1787 of yacc.c  */
-#line 64 "lazy.y"
+#line 65 "lazy.y"
     { (yyval.expr) = (yyvsp[(2) - (3)].expr); }
     break;
 
   case 14:
 /* Line 1787 of yacc.c  */
-#line 66 "lazy.y"
+#line 67 "lazy.y"
     { (yyval.expr) = nullptr;}
     break;
 
   case 15:
 /* Line 1787 of yacc.c  */
-#line 67 "lazy.y"
+#line 68 "lazy.y"
     { (yyval.expr) = new Lazy::DottedPair((yyvsp[(1) - (2)].expr),(DottedPair*)(yyvsp[(2) - (2)].expr));}
     break;
 
 
 /* Line 1787 of yacc.c  */
-#line 1481 "Parser.c"
+#line 1482 "Parser.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1527,7 +1528,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (scanner, YY_("syntax error"));
+      yyerror (expression, scanner, YY_("syntax error"));
 #else
 # define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
                                         yyssp, yytoken)
@@ -1554,7 +1555,7 @@ yyerrlab:
                 yymsgp = yymsg;
               }
           }
-        yyerror (scanner, yymsgp);
+        yyerror (expression, scanner, yymsgp);
         if (yysyntax_error_status == 2)
           goto yyexhaustedlab;
       }
@@ -1578,7 +1579,7 @@ yyerrlab:
       else
 	{
 	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, scanner);
+		      yytoken, &yylval, expression, scanner);
 	  yychar = YYEMPTY;
 	}
     }
@@ -1634,7 +1635,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, scanner);
+		  yystos[yystate], yyvsp, expression, scanner);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1669,7 +1670,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (scanner, YY_("memory exhausted"));
+  yyerror (expression, scanner, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1681,7 +1682,7 @@ yyreturn:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, scanner);
+                  yytoken, &yylval, expression, scanner);
     }
   /* Do not reclaim the symbols of the rule which action triggered
      this YYABORT or YYACCEPT.  */
@@ -1690,7 +1691,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, scanner);
+		  yystos[*yyssp], yyvsp, expression, scanner);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1707,11 +1708,32 @@ yyreturn:
 
 
 /* Line 2048 of yacc.c  */
-#line 69 "lazy.y"
+#line 70 "lazy.y"
 
+std::vector<SExpression*> eval_str(const char* str){ 
+    yyscan_t scanner;
+    std::vector<SExpression*> res;
+    YY_BUFFER_STATE state;
+    if (yylex_init(&scanner)) {
+            // couldn't initialize
+            return std::vector<SExpression*>();
+    }
+    state = yy_scan_string(str,scanner);
+    if(!state) return std::vector<SExpression*>();
+    if (yyparse(&res,scanner)) {
+            // error parsing
+            return std::vector<SExpression*>();
+    }
+    yy_delete_buffer(state, scanner);
+    
+ 
+    yylex_destroy(scanner);
+    return res;
+}
 int main(){
-        ls = new LispState;
+        LispState* ls = new LispState();
         bind_builtin(ls);
+        std::vector<SExpression*>res;
         yyscan_t scanner;
         YY_BUFFER_STATE state;
         if (yylex_init(&scanner)) {
@@ -1729,12 +1751,16 @@ int main(){
                 continue;
             state = yy_scan_string(str,scanner);
             if(!state) return 1;
-            if (yyparse(scanner)) {
+            if (yyparse(&res,scanner)) {
                     // error parsing
                     return 1;
             }
+            yy_delete_buffer(state, scanner);
+            for(auto&x:res){
+                eval(ls,x);
+            }
+            res.clear();
         }
-        yy_delete_buffer(state, scanner);
  
         yylex_destroy(scanner);
 }

@@ -41,7 +41,7 @@ extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
 /* Line 2049 of yacc.c  */
-#line 14 "lazy.y"
+#line 13 "lazy.y"
  
         #ifndef YY_TYPEDEF_YY_SCANNER_T
                 #define YY_TYPEDEF_YY_SCANNER_T
@@ -73,7 +73,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2049 of yacc.c  */
-#line 29 "lazy.y"
+#line 30 "lazy.y"
 
    Lazy::SExpression * expr;
    std::string* str;
@@ -96,7 +96,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (yyscan_t scanner);
+int yyparse (std::vector<Lazy::SExpression*> *expression, yyscan_t scanner);
 #else
 int yyparse ();
 #endif

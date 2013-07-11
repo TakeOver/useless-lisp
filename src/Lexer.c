@@ -450,13 +450,14 @@ static yyconst flex_int16_t yy_chk[38] =
  * To generate the lexical analyzer run: "flex Lexer.l"
  */
 #include <string>
+#include <vector>
 #include <iostream>
 #include "Parser.h"
  
 #include <stdio.h>
  
 #define YY_NO_UNISTD_H 1
-#line 460 "Lexer.c"
+#line 461 "Lexer.c"
 
 #define INITIAL 0
 
@@ -693,9 +694,9 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 32 "lazy.l"
+#line 33 "lazy.l"
 
-#line 699 "Lexer.c"
+#line 700 "Lexer.c"
 
     yylval = yylval_param;
 
@@ -778,62 +779,62 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 33 "lazy.l"
+#line 34 "lazy.l"
 { yylval->str = new std::string(yytext); return TOKEN_NUMBER; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 34 "lazy.l"
+#line 35 "lazy.l"
 { return TOKEN_TRUE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 35 "lazy.l"
+#line 36 "lazy.l"
 { return TOKEN_FALSE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 36 "lazy.l"
+#line 37 "lazy.l"
 { yylval->str = new std::string(yytext);return ATOM;}
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 37 "lazy.l"
+#line 38 "lazy.l"
 {}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 38 "lazy.l"
+#line 39 "lazy.l"
 { /* Skip blanks. */ } 
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 39 "lazy.l"
+#line 40 "lazy.l"
 { return TOKEN_LPAREN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 40 "lazy.l"
+#line 41 "lazy.l"
 { return TOKEN_RPAREN; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 41 "lazy.l"
+#line 42 "lazy.l"
 { return TOKEN_DOT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 42 "lazy.l"
+#line 43 "lazy.l"
 {  }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 44 "lazy.l"
+#line 45 "lazy.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 837 "Lexer.c"
+#line 838 "Lexer.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1998,7 +1999,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 44 "lazy.l"
+#line 45 "lazy.l"
 
 
  

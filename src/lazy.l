@@ -6,6 +6,7 @@
  * To generate the lexical analyzer run: "flex Lexer.l"
  */
 #include <string>
+#include <vector>
 #include <iostream>
 #include "Parser.h"
  

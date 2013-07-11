@@ -1,14 +1,13 @@
 %{
 #include "utils.hpp"
+#include <vector>
    using namespace Lazy;
 #include "Parser.h"
 #include "Lexer.h"
-int yyerror(yyscan_t scanner, const char *msg){
+int yyerror(std::vector<SExpression*>*,yyscan_t scanner, const char *msg){
         printf("Error:%s\n",msg);
         return 0;
-}
-        LispState * ls;
-SExpression * res = nullptr; 
+} 
 %}
  
 %code requires { 
@@ -25,6 +24,8 @@ SExpression * res = nullptr;
 %start prog;
 %define api.pure
 %lex-param   { yyscan_t scanner }
+%parse-param { std::vector<Lazy::SExpression*> *expression }
+
 %parse-param { yyscan_t scanner }
 %union{
    Lazy::SExpression * expr;
@@ -36,18 +37,18 @@ SExpression * res = nullptr;
 %token TOKEN_NUMBER
 %token ATOM TOKEN_DOT TOKEN_TRUE TOKEN_FALSE
 %type<expr> S_value
-%type<expr> S_expr prog
+%type<expr> S_expr
 %type<expr> quot list list_args// dot_pair
 %type<str> TOKEN_NUMBER ATOM
 
 %%
- prog: S_expr { res = $1; $$ = $1;
-        eval(ls,res);
-} | prog  S_expr {
-        res = $2; $$ = $2;
-        eval(ls,res);
-    }|;
-S_expr: S_value {$$=$1;};
+prog:   S_expr          { expression->push_back($1);} 
+|       prog  S_expr    { expression->push_back($2);}
+|
+;
+
+S_expr: S_value {$$=$1;}
+;
 
 S_value:        ATOM            {$$=new Variable(*$1);}
 |               TOKEN_NUMBER    { $$ = num(strtold($1->c_str(),nullptr));} 
@@ -67,9 +68,30 @@ list_args:                      { $$ = nullptr;}
 |       S_value list_args       { $$ = new Lazy::DottedPair($1,(DottedPair*)$2);}
 ;
 %%
+std::vector<SExpression*> eval_str(const char* str){ 
+    yyscan_t scanner;
+    std::vector<SExpression*> res;
+    YY_BUFFER_STATE state;
+    if (yylex_init(&scanner)) {
+            // couldn't initialize
+            return std::vector<SExpression*>();
+    }
+    state = yy_scan_string(str,scanner);
+    if(!state) return std::vector<SExpression*>();
+    if (yyparse(&res,scanner)) {
+            // error parsing
+            return std::vector<SExpression*>();
+    }
+    yy_delete_buffer(state, scanner);
+    
+ 
+    yylex_destroy(scanner);
+    return res;
+}
 int main(){
-        ls = new LispState;
+        LispState* ls = new LispState();
         bind_builtin(ls);
+        std::vector<SExpression*>res;
         yyscan_t scanner;
         YY_BUFFER_STATE state;
         if (yylex_init(&scanner)) {
@@ -87,12 +109,16 @@ int main(){
                 continue;
             state = yy_scan_string(str,scanner);
             if(!state) return 1;
-            if (yyparse(scanner)) {
+            if (yyparse(&res,scanner)) {
                     // error parsing
                     return 1;
             }
+            yy_delete_buffer(state, scanner);
+            for(auto&x:res){
+                eval(ls,x);
+            }
+            res.clear();
         }
-        yy_delete_buffer(state, scanner);
  
         yylex_destroy(scanner);
 }
