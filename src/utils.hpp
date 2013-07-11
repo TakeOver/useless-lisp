@@ -19,6 +19,19 @@ BUILTIN_OP(mul);
 #define dot(x,y) Lazy::DottedPair::make(x,y)
 #define num(x) new Lazy::Number(x)
 
+Lazy::SExpression* print(Lazy::LispState*ls,Lazy::DottedPair*args){
+        Lazy::SExpression* res = eval(ls,args->car());
+        if(!res){
+                std::cout << "nil\n";
+                return nullptr;
+        }
+        if(res->type() == Lazy::Type::NUMBER){
+                std::cout << ((Lazy::Number*)res)->get() << '\n';
+                return res;
+        }
+        return res;
+}
+
 Lazy::SExpression* let(Lazy::LispState*ls,Lazy::DottedPair*args){
         if(!args){return nullptr;}
         Lazy::DottedPair* dp = (Lazy::DottedPair*) args;
@@ -32,19 +45,6 @@ Lazy::SExpression* let(Lazy::LispState*ls,Lazy::DottedPair*args){
         Lazy::SExpression * expr;
         ls->setVariable(vr->name, expr=eval(ls,dp->cdr()->car()),true);
         return expr;
-}
-
-Lazy::SExpression* print(Lazy::LispState*ls,Lazy::DottedPair*args){
-        Lazy::SExpression* res = eval(ls,args->car());
-        if(!res){
-                std::cout << "nil\n";
-                return nullptr;
-        }
-        if(res->type() == Lazy::Type::NUMBER){
-                std::cout << ((Lazy::Number*)res)->get() << '\n';
-                return res;
-        }
-        return res;
 }
 
 Lazy::SExpression* debuglocals(Lazy::LispState*ls,Lazy::DottedPair*args){
@@ -63,10 +63,15 @@ Lazy::SExpression* setq(Lazy::LispState*ls,Lazy::DottedPair*args){
         auto value = val->car();
         if(!value)
                 return nullptr;
-        ls->setVariable(((Lazy::Variable*)vr)->name, value=value->Evaluate(ls, nullptr));
+        ls->setVariable(((Lazy::Variable*)vr)->name, value=eval(ls,value));
         return value;
 }
 
+Lazy::SExpression* exit(Lazy::LispState*ls,Lazy::DottedPair*args){
+        delete ls;
+        exit((int)((Lazy::Number*)args->car())->get());
+        return nullptr;
+}
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)
 void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(add, ls);
@@ -81,5 +86,7 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(print, ls);
         BIND_BUILTIN(debuglocals, ls);
         BIND_BUILTIN(setq, ls);
+        BIND_BUILTIN(exit, ls);
+        ls->setVariable("nil", nullptr);
         ls->debugLocals();
 }

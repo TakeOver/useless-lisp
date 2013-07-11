@@ -27,7 +27,7 @@ FALSE           "#f"
 
 NUMBER          [0-9]+
 WS              [ \r\n\t\f\v]+
-ANY             [a-zA-Z]+
+ANY             [a-zA-Z\+\-\*\/\$\%\^\&\!\?\,\~\:]+
  
 %%
 {NUMBER}        { yylval->str = new std::string(yytext); return TOKEN_NUMBER; }

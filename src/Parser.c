@@ -1710,8 +1710,6 @@ yyreturn:
 #line 69 "lazy.y"
 
 int main(){
-        char* str = (char*) calloc(100,sizeof(char));
-        str = gets(str);
         ls = new LispState;
         bind_builtin(ls);
         yyscan_t scanner;
@@ -1720,14 +1718,22 @@ int main(){
                 // couldn't initialize
                 return 1;
         }
-    
-        state = yy_scan_string(str,scanner);
-        if(!state) return 1;
-        if (yyparse(scanner)) {
-                // error parsing
-                return 1;
+        char* str = (char*) calloc(100,sizeof(char));
+        strcpy(str,"(print ");
+        while(true){
+            memset(str+7,0,92);
+            printf("repl>> ");
+            gets(str+7);
+            str[strlen(str)]=')';
+            if(strcmp("(print )",str)==0)
+                continue;
+            state = yy_scan_string(str,scanner);
+            if(!state) return 1;
+            if (yyparse(scanner)) {
+                    // error parsing
+                    return 1;
+            }
         }
- 
         yy_delete_buffer(state, scanner);
  
         yylex_destroy(scanner);

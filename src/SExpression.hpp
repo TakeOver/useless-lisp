@@ -67,21 +67,13 @@ namespace Lazy{
                         return new DottedPair(value, new DottedPair(next,nullptr));
                 }
 
-                static DottedPair* make(decltype(value) value, decltype(next) next){
-                        return new DottedPair(value,next);
-                }
-
                 virtual SExpression* Evaluate(EVAL_ARGS) override { return eval(ls,this); }
                 virtual Type type() override { return Type::DOT; }
                 SExpression* car() { return value; }
                 DottedPair* cdr() { return next; }
                 DottedPair* append(SExpression* elem){
                         DottedPair* end = this->last();
-                        if(elem->type() == Type::DOT){
-                                end->next = static_cast<DottedPair*>(elem);
-                        }else{
                                 end->next = new DottedPair(elem,nullptr);
-                        }
                         return this;
                 }
                 DottedPair* last() { 
