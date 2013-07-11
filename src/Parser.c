@@ -1754,11 +1754,6 @@ SExpression * eval_expr(LispState*ls, const std::vector<SExpression*>& exprs){
 SExpression * eval(LispState *ls, const char*str){
     return eval_expr(ls,eval_str(str));
 }
-SExpression* read(LispState * ls, DottedPair* args){
-    std::string str;
-    std::getline(std::cin,str);
-    return new String(str);
-}
 SExpression* eval(LispState* ls, DottedPair* args){
     auto tmp = args->car();
     if(!tmp)
@@ -1774,21 +1769,10 @@ SExpression* eval(LispState* ls, DottedPair* args){
     }
     return tmp->Evaluate(ls,nullptr);
 }
-SExpression* tonum(LispState* ls, DottedPair* args){
-    auto tmp = args->car();
-    if(!tmp)return nullptr;
-    tmp = tmp->Evaluate(ls,nullptr);
-    if(!tmp)return nullptr;
-    if(tmp->type() == Type::NUMBER)return tmp;
-    if(tmp->type() == Type::STRING) return new Number(strtold(((String*)tmp)->get().c_str(),nullptr));
-    return nullptr;
-}
+
 int main(){
         LispState* ls = new LispState();
         bind_builtin(ls);
-        ls->setVariable("eval",new Subroutine(eval),true);
-        ls->setVariable("read",new Subroutine(read),true);
-        ls->setVariable("tonum",new Subroutine(tonum),true);
         std::vector<SExpression*>res;
         yyscan_t scanner;
         YY_BUFFER_STATE state;

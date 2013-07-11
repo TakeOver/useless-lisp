@@ -1,6 +1,7 @@
 #include "LispMachine.hpp"
 #include "subroutine.hpp"
 #include <iostream>
+namespace { using namespace Lazy;}
 #define BUILTIN_OP(name)\
 Lazy::SExpression* name(Lazy::LispState*ls,Lazy::DottedPair* args){\
         if(!args)\
@@ -71,13 +72,27 @@ Lazy::SExpression* setq(Lazy::LispState*ls,Lazy::DottedPair*args){
         ls->setVariable(((Lazy::Variable*)vr)->name, value=eval(ls,value));
         return value;
 }
-
+SExpression* tonum(LispState* ls, DottedPair* args){
+    auto tmp = args->car();
+    if(!tmp)return nullptr;
+    tmp = tmp->Evaluate(ls,nullptr);
+    if(!tmp)return nullptr;
+    if(tmp->type() == Type::NUMBER)return tmp;
+    if(tmp->type() == Type::STRING) return new Number(strtold(((String*)tmp)->get().c_str(),nullptr));
+    return nullptr;
+}
 Lazy::SExpression* exit(Lazy::LispState*ls,Lazy::DottedPair*args){
         delete ls;
         Lazy::Number * num;
         exit((int)((num=(Lazy::Number*)args->car())?num->get():0));
         return nullptr;
 }
+SExpression* read(LispState * ls, DottedPair* args){
+    std::string str;
+    std::getline(std::cin,str);
+    return new String(str);
+}
+extern SExpression* eval(LispState* ls, DottedPair* args);
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)
 void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(add, ls);
@@ -93,6 +108,8 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(debuglocals, ls);
         BIND_BUILTIN(setq, ls);
         BIND_BUILTIN(exit, ls);
+        BIND_BUILTIN(tonum, ls);
+        BIND_BUILTIN(read, ls);        
+        BIND_BUILTIN(eval, ls);
         ls->setVariable("nil", nullptr);
-        ls->debugLocals();
 }
