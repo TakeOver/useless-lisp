@@ -391,18 +391,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  15
+#define YYFINAL  17
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   22
+#define YYLAST   29
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  11
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  7
+#define YYNNTS  8
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  15
+#define YYNRULES  17
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  19
+#define YYNSTATES  21
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -449,23 +449,23 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     8,     9,    11,    13,    15,    17,
-      19,    21,    23,    26,    30,    31
+      19,    21,    23,    25,    28,    31,    35,    37
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
       12,     0,    -1,    13,    -1,    12,    13,    -1,    -1,    14,
-      -1,     6,    -1,     5,    -1,    16,    -1,    15,    -1,     8,
-      -1,     9,    -1,    10,    14,    -1,     3,    17,     4,    -1,
-      -1,    14,    17,    -1
+      -1,     6,    -1,     5,    -1,    17,    -1,    15,    -1,    16,
+      -1,     8,    -1,     9,    -1,    10,    14,    -1,     3,     4,
+      -1,     3,    18,     4,    -1,    14,    -1,    14,    18,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
        0,    45,    45,    46,    47,    50,    53,    54,    56,    57,
-      58,    59,    63,    65,    67,    68
+      58,    59,    60,    64,    66,    67,    69,    70
 };
 #endif
 
@@ -476,7 +476,8 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "TOKEN_LPAREN", "TOKEN_RPAREN",
   "TOKEN_NUMBER", "ATOM", "TOKEN_DOT", "TOKEN_TRUE", "TOKEN_FALSE", "'`'",
-  "$accept", "prog", "S_expr", "S_value", "quot", "list", "list_args", YY_NULL
+  "$accept", "prog", "S_expr", "S_value", "quot", "listnone", "list",
+  "list_args", YY_NULL
 };
 #endif
 
@@ -494,14 +495,14 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    11,    12,    12,    12,    13,    14,    14,    14,    14,
-      14,    14,    15,    16,    17,    17
+      14,    14,    14,    15,    16,    17,    18,    18
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     2,     0,     1,     1,     1,     1,     1,
-       1,     1,     2,     3,     0,     2
+       1,     1,     1,     2,     2,     3,     1,     2
 };
 
 /* YYDEFACT[STATE-NAME] -- Default reduction number in state STATE-NUM.
@@ -509,29 +510,31 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       4,    14,     7,     6,    10,    11,     0,     0,     2,     5,
-       9,     8,    14,     0,    12,     1,     3,    15,    13
+       4,     0,     7,     6,    11,    12,     0,     0,     2,     5,
+       9,    10,     8,    14,    16,     0,    13,     1,     3,    17,
+      15
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     7,     8,     9,    10,    11,    13
+      -1,     7,     8,     9,    10,    11,    12,    15
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -10
+#define YYPACT_NINF -7
 static const yytype_int8 yypact[] =
 {
-      12,    12,   -10,   -10,   -10,   -10,    12,     4,   -10,   -10,
-     -10,   -10,    12,    -3,   -10,   -10,   -10,   -10,   -10
+      19,    11,    -7,    -7,    -7,    -7,    19,     1,    -7,    -7,
+      -7,    -7,    -7,    -7,    19,    -2,    -7,    -7,    -7,    -7,
+      -7
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -10,   -10,    -5,    -1,   -10,   -10,    -9
+      -7,    -7,    -4,    -1,    -7,    -7,    -7,    -6
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -540,22 +543,22 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      12,    18,    16,    17,    15,    14,     0,     1,     0,     2,
-       3,    12,     4,     5,     6,     1,     0,     2,     3,     0,
-       4,     5,     6
+      14,    17,    20,    18,     1,    16,     2,     3,    19,     4,
+       5,     6,     0,    14,     1,    13,     2,     3,     0,     4,
+       5,     6,     1,     0,     2,     3,     0,     4,     5,     6
 };
 
 #define yypact_value_is_default(yystate) \
-  ((yystate) == (-10))
+  ((yystate) == (-7))
 
 #define yytable_value_is_error(yytable_value) \
   YYID (0)
 
 static const yytype_int8 yycheck[] =
 {
-       1,     4,     7,    12,     0,     6,    -1,     3,    -1,     5,
-       6,    12,     8,     9,    10,     3,    -1,     5,     6,    -1,
-       8,     9,    10
+       1,     0,     4,     7,     3,     6,     5,     6,    14,     8,
+       9,    10,    -1,    14,     3,     4,     5,     6,    -1,     8,
+       9,    10,     3,    -1,     5,     6,    -1,     8,     9,    10
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -563,7 +566,8 @@ static const yytype_int8 yycheck[] =
 static const yytype_uint8 yystos[] =
 {
        0,     3,     5,     6,     8,     9,    10,    12,    13,    14,
-      15,    16,    14,    17,    14,     0,    13,    17,     4
+      15,    16,    17,     4,    14,    18,    14,     0,    13,    18,
+       4
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1419,66 +1423,78 @@ yyreduce:
   case 6:
 /* Line 1787 of yacc.c  */
 #line 53 "lazy.y"
-    {(yyval.expr)=new Variable(*(yyvsp[(1) - (1)].str));}
+    { (yyval.expr) = new Variable(*(yyvsp[(1) - (1)].str)); }
     break;
 
   case 7:
 /* Line 1787 of yacc.c  */
 #line 54 "lazy.y"
-    { (yyval.expr) = num(strtold((yyvsp[(1) - (1)].str)->c_str(),nullptr));}
+    { (yyval.expr) = num(strtold((yyvsp[(1) - (1)].str)->c_str(),nullptr)); }
     break;
 
   case 8:
 /* Line 1787 of yacc.c  */
 #line 56 "lazy.y"
-    {(yyval.expr)=(yyvsp[(1) - (1)].expr);}
+    { if ( !(yyvsp[(1) - (1)].expr) ) (yyval.expr) = new DottedPair( nullptr, nullptr ); else (yyval.expr) = (yyvsp[(1) - (1)].expr); }
     break;
 
   case 9:
 /* Line 1787 of yacc.c  */
 #line 57 "lazy.y"
-    {(yyval.expr)=(yyvsp[(1) - (1)].expr);}
+    { (yyval.expr) = (yyvsp[(1) - (1)].expr); }
     break;
 
   case 10:
 /* Line 1787 of yacc.c  */
 #line 58 "lazy.y"
-    { (yyval.expr) = new Boolean(true);}
+    { (yyval.expr) = (yyvsp[(1) - (1)].expr); }
     break;
 
   case 11:
 /* Line 1787 of yacc.c  */
 #line 59 "lazy.y"
-    { (yyval.expr) = new Boolean(false);}
+    { (yyval.expr) = new Boolean( true ); }
     break;
 
   case 12:
 /* Line 1787 of yacc.c  */
-#line 63 "lazy.y"
-    { (yyval.expr) = new Quot((yyvsp[(2) - (2)].expr));}
+#line 60 "lazy.y"
+    { (yyval.expr) = new Boolean( false ); }
     break;
 
   case 13:
 /* Line 1787 of yacc.c  */
-#line 65 "lazy.y"
-    { (yyval.expr) = (yyvsp[(2) - (3)].expr); }
+#line 64 "lazy.y"
+    { (yyval.expr) = new Quot((yyvsp[(2) - (2)].expr));}
     break;
 
   case 14:
 /* Line 1787 of yacc.c  */
-#line 67 "lazy.y"
-    { (yyval.expr) = nullptr;}
+#line 66 "lazy.y"
+    { (yyval.expr) = new DottedPair(nullptr,nullptr); }
     break;
 
   case 15:
 /* Line 1787 of yacc.c  */
-#line 68 "lazy.y"
+#line 67 "lazy.y"
+    {(yyval.expr) = (yyvsp[(2) - (3)].expr); }
+    break;
+
+  case 16:
+/* Line 1787 of yacc.c  */
+#line 69 "lazy.y"
+    { (yyval.expr) = new DottedPair((yyvsp[(1) - (1)].expr),nullptr);}
+    break;
+
+  case 17:
+/* Line 1787 of yacc.c  */
+#line 70 "lazy.y"
     { (yyval.expr) = new Lazy::DottedPair((yyvsp[(1) - (2)].expr),(DottedPair*)(yyvsp[(2) - (2)].expr));}
     break;
 
 
 /* Line 1787 of yacc.c  */
-#line 1482 "Parser.c"
+#line 1498 "Parser.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1708,7 +1724,7 @@ yyreturn:
 
 
 /* Line 2048 of yacc.c  */
-#line 70 "lazy.y"
+#line 72 "lazy.y"
 
 std::vector<SExpression*> eval_str(const char* str){ 
     yyscan_t scanner;
@@ -1730,9 +1746,49 @@ std::vector<SExpression*> eval_str(const char* str){
     yylex_destroy(scanner);
     return res;
 }
+SExpression * eval_expr(LispState*ls, const std::vector<SExpression*>& exprs){
+    SExpression* res = nullptr;
+    for(auto&x:exprs)res = eval(ls,x);
+    return res;
+}
+SExpression * eval(LispState *ls, const char*str){
+    return eval_expr(ls,eval_str(str));
+}
+SExpression* read(LispState * ls, DottedPair* args){
+    std::string str;
+    std::getline(std::cin,str);
+    return new String(str);
+}
+SExpression* eval(LispState* ls, DottedPair* args){
+    auto tmp = args->car();
+    if(!tmp)
+        return nullptr;
+    tmp = tmp->Evaluate(ls,nullptr);
+    if(!tmp)
+        return nullptr;
+    if(tmp->type() == Type::DOT){
+        return eval(ls,tmp);
+    }
+    if(tmp->type() == Type::STRING){
+        return eval(ls, ((String*)tmp)->get().c_str());
+    }
+    return tmp->Evaluate(ls,nullptr);
+}
+SExpression* tonum(LispState* ls, DottedPair* args){
+    auto tmp = args->car();
+    if(!tmp)return nullptr;
+    tmp = tmp->Evaluate(ls,nullptr);
+    if(!tmp)return nullptr;
+    if(tmp->type() == Type::NUMBER)return tmp;
+    if(tmp->type() == Type::STRING) return new Number(strtold(((String*)tmp)->get().c_str(),nullptr));
+    return nullptr;
+}
 int main(){
         LispState* ls = new LispState();
         bind_builtin(ls);
+        ls->setVariable("eval",new Subroutine(eval),true);
+        ls->setVariable("read",new Subroutine(read),true);
+        ls->setVariable("tonum",new Subroutine(tonum),true);
         std::vector<SExpression*>res;
         yyscan_t scanner;
         YY_BUFFER_STATE state;

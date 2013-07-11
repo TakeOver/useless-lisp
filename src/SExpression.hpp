@@ -90,7 +90,13 @@ namespace Lazy{
                 virtual ~Variable(){}
                 Variable(const std::string& name, VarRef * cache = nullptr):name(name),cache(cache){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override { return (cache?cache:cache=ls->getVariable(name))?cache->ref:nullptr; }
+                virtual SExpression* Evaluate(EVAL_ARGS) override { 
+                        return  (       cache?
+                                                cache:
+                                                cache=ls->getVariable(name))?
+                                        cache->ref:
+                                        nullptr; 
+                }
                 virtual Type type() override { return Type::VARIABLE; }
         };
 
@@ -101,7 +107,12 @@ namespace Lazy{
                 virtual ~Subroutine(){}
                 Subroutine(subr fun):fun(fun){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override {if(!se || se->type()!=Type::DOT) return nullptr;return fun(ls,(DottedPair*)se);}
+                virtual SExpression* Evaluate(EVAL_ARGS) override {
+                        if(!se || se->type()!=Type::DOT) 
+                                se = new DottedPair();
+                        return fun(ls,(DottedPair*)se);
+                }
+
                 virtual Type type() override { return Type::SUBR; }
         };
 

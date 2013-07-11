@@ -27,7 +27,12 @@ Lazy::SExpression* print(Lazy::LispState*ls,Lazy::DottedPair*args){
         }
         if(res->type() == Lazy::Type::NUMBER){
                 std::cout << ((Lazy::Number*)res)->get() << '\n';
-                return res;
+        }
+        if(res->type() == Lazy::Type::STRING){
+                std::cout << ((Lazy::String*)res)->get() << '\n';
+        }
+        if(res->type() == Lazy::Type::BOOLEAN){
+                std::cout << (((Lazy::Boolean*)res)->get()?"#t":"#f") << '\n';
         }
         return res;
 }
@@ -69,7 +74,8 @@ Lazy::SExpression* setq(Lazy::LispState*ls,Lazy::DottedPair*args){
 
 Lazy::SExpression* exit(Lazy::LispState*ls,Lazy::DottedPair*args){
         delete ls;
-        exit((int)((Lazy::Number*)args->car())->get());
+        Lazy::Number * num;
+        exit((int)((num=(Lazy::Number*)args->car())?num->get():0));
         return nullptr;
 }
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)

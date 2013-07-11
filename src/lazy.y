@@ -37,7 +37,7 @@ int yyerror(std::vector<SExpression*>*,yyscan_t scanner, const char *msg){
 %token TOKEN_NUMBER
 %token ATOM TOKEN_DOT TOKEN_TRUE TOKEN_FALSE
 %type<expr> S_value
-%type<expr> S_expr
+%type<expr> S_expr listnone
 %type<expr> quot list list_args// dot_pair
 %type<str> TOKEN_NUMBER ATOM
 
@@ -50,21 +50,23 @@ prog:   S_expr          { expression->push_back($1);}
 S_expr: S_value {$$=$1;}
 ;
 
-S_value:        ATOM            {$$=new Variable(*$1);}
-|               TOKEN_NUMBER    { $$ = num(strtold($1->c_str(),nullptr));} 
-//|               dot_pair        {$$=$1;}
-|               list            {$$=$1;}
-|               quot            {$$=$1;}
-|               TOKEN_TRUE      { $$ = new Boolean(true);} 
-|               TOKEN_FALSE     { $$ = new Boolean(false);}
+S_value:        ATOM            { $$ = new Variable(*$1); }
+|               TOKEN_NUMBER    { $$ = num(strtold($1->c_str(),nullptr)); } 
+//|               dot_pair        {$$=$1; }
+|               list            { if ( !$1 ) $$ = new DottedPair( nullptr, nullptr ); else $$ = $1; }
+|               quot            { $$ = $1; }
+|               listnone        { $$ = $1; }
+|               TOKEN_TRUE      { $$ = new Boolean( true ); } 
+|               TOKEN_FALSE     { $$ = new Boolean( false ); }
 ;
 //dot_pair: TOKEN_LPAREN S_value TOKEN_DOT S_value TOKEN_RPAREN { $$= dot($2,$4);}
 //;
 quot: '`' S_value { $$ = new Quot($2);}
 ;
-list: TOKEN_LPAREN list_args TOKEN_RPAREN { $$ = $2; }
+listnone: TOKEN_LPAREN TOKEN_RPAREN { $$ = new DottedPair(nullptr,nullptr); }
+list: TOKEN_LPAREN list_args TOKEN_RPAREN {$$ = $2; }
 ;
-list_args:                      { $$ = nullptr;}
+list_args:   S_value            { $$ = new DottedPair($1,nullptr);}
 |       S_value list_args       { $$ = new Lazy::DottedPair($1,(DottedPair*)$2);}
 ;
 %%
@@ -88,9 +90,49 @@ std::vector<SExpression*> eval_str(const char* str){
     yylex_destroy(scanner);
     return res;
 }
+SExpression * eval_expr(LispState*ls, const std::vector<SExpression*>& exprs){
+    SExpression* res = nullptr;
+    for(auto&x:exprs)res = eval(ls,x);
+    return res;
+}
+SExpression * eval(LispState *ls, const char*str){
+    return eval_expr(ls,eval_str(str));
+}
+SExpression* read(LispState * ls, DottedPair* args){
+    std::string str;
+    std::getline(std::cin,str);
+    return new String(str);
+}
+SExpression* eval(LispState* ls, DottedPair* args){
+    auto tmp = args->car();
+    if(!tmp)
+        return nullptr;
+    tmp = tmp->Evaluate(ls,nullptr);
+    if(!tmp)
+        return nullptr;
+    if(tmp->type() == Type::DOT){
+        return eval(ls,tmp);
+    }
+    if(tmp->type() == Type::STRING){
+        return eval(ls, ((String*)tmp)->get().c_str());
+    }
+    return tmp->Evaluate(ls,nullptr);
+}
+SExpression* tonum(LispState* ls, DottedPair* args){
+    auto tmp = args->car();
+    if(!tmp)return nullptr;
+    tmp = tmp->Evaluate(ls,nullptr);
+    if(!tmp)return nullptr;
+    if(tmp->type() == Type::NUMBER)return tmp;
+    if(tmp->type() == Type::STRING) return new Number(strtold(((String*)tmp)->get().c_str(),nullptr));
+    return nullptr;
+}
 int main(){
         LispState* ls = new LispState();
         bind_builtin(ls);
+        ls->setVariable("eval",new Subroutine(eval),true);
+        ls->setVariable("read",new Subroutine(read),true);
+        ls->setVariable("tonum",new Subroutine(tonum),true);
         std::vector<SExpression*>res;
         yyscan_t scanner;
         YY_BUFFER_STATE state;
