@@ -1,9 +1,12 @@
 %{
  
+        namespace Lazy{class SExpression;}
 /*
  * Lexer.l file
  * To generate the lexical analyzer run: "flex Lexer.l"
  */
+#include <string>
+#include <iostream>
 #include "Parser.h"
  
 #include <stdio.h>
@@ -23,14 +26,14 @@ TRUE            "#t"
 FALSE           "#f"
 
 NUMBER          [0-9]+
-WS              [ \r\n\t\f\v]*
-ANY             [a-zA-Z0-9\-?!~@#$%\^&\*\+\\]
+WS              [ \r\n\t\f\v]+
+ANY             [a-zA-Z]+
  
 %%
-{NUMBER}        { return TOKEN_NUMBER; }
+{NUMBER}        { yylval->str = new std::string(yytext); return TOKEN_NUMBER; }
 {TRUE}          { return TOKEN_TRUE; }
 {FALSE}         { return TOKEN_FALSE; }
-{ANY}           { return ATOM;}
+{ANY}           { yylval->str = new std::string(yytext);return ATOM;}
 ({SEMICOLON}(.)*[\n])     {}
 {WS}            { /* Skip blanks. */ } 
 {LPAREN}        { return TOKEN_LPAREN; }

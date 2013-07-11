@@ -71,9 +71,8 @@ namespace Lazy{
                         return new DottedPair(value,next);
                 }
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override { /*TODO func call.*/ return eval(ls,this); }
+                virtual SExpression* Evaluate(EVAL_ARGS) override { return eval(ls,this); }
                 virtual Type type() override { return Type::DOT; }
-                decltype(value)& get() { return value; }
                 SExpression* car() { return value; }
                 DottedPair* cdr() { return next; }
                 DottedPair* append(SExpression* elem){
@@ -85,8 +84,6 @@ namespace Lazy{
                         }
                         return this;
                 }
-                DottedPair* get_next() const { return next; }
-                DottedPair* get_next() { return const_cast<DottedPair*>(this)->next; }
                 DottedPair* last() { 
                         DottedPair* iter = this;
                         while(iter->next!=nullptr)iter = iter->next;
@@ -97,32 +94,34 @@ namespace Lazy{
         class Variable: public SExpression{
         public:
                 const std::string name;
+                VarRef * cache = nullptr;
                 virtual ~Variable(){}
-                Variable(const std::string& name):name(name){}
+                Variable(const std::string& name, VarRef * cache = nullptr):name(name),cache(cache){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override { return ls->getVariable(name); }
+                virtual SExpression* Evaluate(EVAL_ARGS) override { return (cache?cache:cache=ls->getVariable(name))?cache->ref:nullptr; }
                 virtual Type type() override { return Type::VARIABLE; }
-        };
-        
-        class Constant: public SExpression{
-        public:
-                const std::string name;
-                virtual ~Constant(){}
-                Constant(const std::string& name):name(name){}
-
-                virtual SExpression* Evaluate(EVAL_ARGS) override { return ls->getVariable(name); }
-                virtual Type type() override { return Type::CONSTANT; }
         };
 
         class Subroutine: public SExpression{
-                SExpression* (*fun)(LispState*, SExpression*);
+                SExpression* (*fun)(LispState*, DottedPair*);
         public:
-                using subr = SExpression* (*)(LispState*,SExpression*);
+                using subr = SExpression* (*)(LispState*,DottedPair*);
                 virtual ~Subroutine(){}
                 Subroutine(subr fun):fun(fun){}
 
-                virtual SExpression* Evaluate(EVAL_ARGS) override {return fun(ls,se);}
+                virtual SExpression* Evaluate(EVAL_ARGS) override {if(!se || se->type()!=Type::DOT) return nullptr;return fun(ls,(DottedPair*)se);}
                 virtual Type type() override { return Type::SUBR; }
+        };
+
+        class Expression: public SExpression{
+                DottedPair* func;
+                LispState *ctx;
+        public:
+                virtual ~Expression(){}
+                Expression(DottedPair *func, LispState* ctx):func(func),ctx(ctx){}
+
+                virtual SExpression* Evaluate(EVAL_ARGS) override {auto t= eval(ls=new LispState(ctx),func);delete ls;return t;}
+                virtual Type type() override { return Type::EXPR; }
         };
 
 

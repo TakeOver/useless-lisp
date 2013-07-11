@@ -41,7 +41,7 @@ extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
 /* Line 2049 of yacc.c  */
-#line 12 "lazy.y"
+#line 14 "lazy.y"
  
         #ifndef YY_TYPEDEF_YY_SCANNER_T
                 #define YY_TYPEDEF_YY_SCANNER_T
@@ -70,7 +70,18 @@ extern int yydebug;
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+/* Line 2049 of yacc.c  */
+#line 29 "lazy.y"
+
+   Lazy::SExpression * expr;
+   std::string* str;
+
+
+/* Line 2049 of yacc.c  */
+#line 84 "Parser.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -2,7 +2,7 @@
 #include "subroutine.hpp"
 #include <iostream>
 #define BUILTIN_OP(name)\
-Lazy::SExpression* name(Lazy::LispState*ls,Lazy::SExpression* args){\
+Lazy::SExpression* name(Lazy::LispState*ls,Lazy::DottedPair* args){\
         if(!args)\
                 return nullptr;\
         if(args->type()!=Lazy::Type::DOT)\
@@ -17,7 +17,7 @@ BUILTIN_OP(mul);
 #define var(x) new Lazy::Variable(#x)
 #define dot(x,y) Lazy::DottedPair::make(x,y)
 #define num(x) new Lazy::Number(x)
-Lazy::SExpression* let(Lazy::LispState*ls,Lazy::SExpression*args){
+Lazy::SExpression* let(Lazy::LispState*ls,Lazy::DottedPair*args){
         if(!args){return nullptr;}
         Lazy::DottedPair* dp = (Lazy::DottedPair*) args;
         Lazy::Variable * vr = (Lazy::Variable*)dp->car();

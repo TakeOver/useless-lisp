@@ -359,10 +359,11 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[21] =
+static yyconst flex_int16_t yy_accept[22] =
     {   0,
-        6,    6,   12,   10,    6,    6,    4,    4,    7,    8,
-        9,    1,   10,    6,    3,    2,    1,    0,    5,    0
+        0,    0,   12,   10,    6,    6,   10,    7,    8,    9,
+        1,   10,    4,    6,    3,    2,    1,    0,    5,    4,
+        0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -370,17 +371,17 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         2,    2,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    4,    1,    5,    4,    4,    4,    1,    6,
-        7,    4,    4,    1,    4,    8,    1,    9,    9,    9,
-        9,    9,    9,    9,    9,    9,    9,    1,   10,    1,
-        1,    1,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        1,    4,    1,    4,    1,    1,    4,    4,    4,    4,
+        1,    2,    1,    1,    4,    1,    1,    1,    1,    5,
+        6,    1,    1,    1,    1,    7,    1,    8,    8,    8,
+        8,    8,    8,    8,    8,    8,    8,    1,    9,    1,
+        1,    1,    1,    1,   10,   10,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
+        1,    1,    1,    1,    1,    1,   10,   10,   10,   10,
 
-        4,   11,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,   12,    4,    4,    4,    4,
-        4,    4,    1,    1,    1,    4,    1,    1,    1,    1,
+       10,   11,   10,   10,   10,   10,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   12,   10,   10,   10,   10,
+       10,   10,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -399,38 +400,38 @@ static yyconst flex_int32_t yy_ec[256] =
 
 static yyconst flex_int32_t yy_meta[13] =
     {   0,
-        1,    2,    2,    1,    1,    1,    1,    1,    1,    1,
-        1,    1
+        1,    2,    2,    1,    1,    1,    1,    1,    1,    3,
+        3,    3
     } ;
 
-static yyconst flex_int16_t yy_base[23] =
+static yyconst flex_int16_t yy_base[25] =
     {   0,
-        0,    0,   22,   23,    0,    0,   23,    2,   23,   23,
-       23,   12,   17,    0,   23,   23,   10,   15,   23,   23,
-       15,   14
+        0,    0,   24,   25,    0,    0,    2,   25,   25,   25,
+       15,   19,    0,    0,   25,   25,   13,   17,   25,    0,
+       25,   17,   14,   15
     } ;
 
-static yyconst flex_int16_t yy_def[23] =
+static yyconst flex_int16_t yy_def[25] =
     {   0,
-       20,    1,   20,   20,   21,   21,   20,   20,   20,   20,
-       20,   20,   22,   21,   20,   20,   20,   22,   20,    0,
-       20,   20
+       21,    1,   21,   21,   22,   22,   21,   21,   21,   21,
+       21,   23,   24,   22,   21,   21,   21,   23,   21,   24,
+        0,   21,   21,   21
     } ;
 
-static yyconst flex_int16_t yy_nxt[36] =
+static yyconst flex_int16_t yy_nxt[38] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
-        7,    7,   15,   16,   18,   18,   14,   19,   17,   19,
-       17,   20,    3,   20,   20,   20,   20,   20,   20,   20,
-       20,   20,   20,   20,   20
+       13,   13,   15,   16,   18,   18,   18,   20,   14,   19,
+       17,   19,   17,   21,    3,   21,   21,   21,   21,   21,
+       21,   21,   21,   21,   21,   21,   21
     } ;
 
-static yyconst flex_int16_t yy_chk[36] =
+static yyconst flex_int16_t yy_chk[38] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    8,    8,   22,   22,   21,   18,   17,   13,
-       12,    3,   20,   20,   20,   20,   20,   20,   20,   20,
-       20,   20,   20,   20,   20
+        1,    1,    7,    7,   23,   23,   23,   24,   22,   18,
+       17,   12,   11,    3,   21,   21,   21,   21,   21,   21,
+       21,   21,   21,   21,   21,   21,   21
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -443,16 +444,19 @@ static yyconst flex_int16_t yy_chk[36] =
 #line 1 "lazy.l"
 #line 2 "lazy.l"
  
+        namespace Lazy{class SExpression;}
 /*
  * Lexer.l file
  * To generate the lexical analyzer run: "flex Lexer.l"
  */
+#include <string>
+#include <iostream>
 #include "Parser.h"
  
 #include <stdio.h>
  
 #define YY_NO_UNISTD_H 1
-#line 456 "Lexer.c"
+#line 460 "Lexer.c"
 
 #define INITIAL 0
 
@@ -689,9 +693,9 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 29 "lazy.l"
+#line 32 "lazy.l"
 
-#line 695 "Lexer.c"
+#line 699 "Lexer.c"
 
     yylval = yylval_param;
 
@@ -746,13 +750,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 21 )
+				if ( yy_current_state >= 22 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 20 );
+		while ( yy_current_state != 21 );
 		yy_cp = yyg->yy_last_accepting_cpos;
 		yy_current_state = yyg->yy_last_accepting_state;
 
@@ -774,62 +778,62 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 30 "lazy.l"
-{ return TOKEN_NUMBER; }
+#line 33 "lazy.l"
+{ yylval->str = new std::string(yytext); return TOKEN_NUMBER; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 31 "lazy.l"
+#line 34 "lazy.l"
 { return TOKEN_TRUE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 32 "lazy.l"
+#line 35 "lazy.l"
 { return TOKEN_FALSE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 33 "lazy.l"
-{ return ATOM;}
+#line 36 "lazy.l"
+{ yylval->str = new std::string(yytext);return ATOM;}
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 34 "lazy.l"
+#line 37 "lazy.l"
 {}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 35 "lazy.l"
+#line 38 "lazy.l"
 { /* Skip blanks. */ } 
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 36 "lazy.l"
+#line 39 "lazy.l"
 { return TOKEN_LPAREN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 37 "lazy.l"
+#line 40 "lazy.l"
 { return TOKEN_RPAREN; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 38 "lazy.l"
+#line 41 "lazy.l"
 { return TOKEN_DOT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 39 "lazy.l"
+#line 42 "lazy.l"
 {  }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 41 "lazy.l"
+#line 44 "lazy.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 833 "Lexer.c"
+#line 837 "Lexer.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1124,7 +1128,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 21 )
+			if ( yy_current_state >= 22 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1153,11 +1157,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 21 )
+		if ( yy_current_state >= 22 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 20);
+	yy_is_jam = (yy_current_state == 21);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
@@ -1994,7 +1998,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 41 "lazy.l"
+#line 44 "lazy.l"
 
 
  

@@ -7,12 +7,16 @@ namespace Lazy{
                 QUOT,
                 DOT,
                 SUBR,
-                FSUBR,
                 EXPR,
-                FEXPR,
                 MACRO,
                 VARIABLE,
-                CONSTANT,
                 BOOLEAN
+        };
+        class SExpression;
+        struct VarRef{
+                SExpression *ref = nullptr;
+                bool mut = true;
+                VarRef(SExpression*ref,bool mut = true):ref(ref),mut(mut){}
+                VarRef(){}
         };
 }
