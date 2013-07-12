@@ -17,14 +17,8 @@ namespace Lazy{
                                         perror(("EXPR|SUBR expected in core::eval\n"));
                                         return nullptr;
                                 }
+                                fun = eval(ls,fun);
                                 auto fty = fun->type();
-                                if(fty==Type::VARIABLE)
-                                        fun = fun->Evaluate(ls,nullptr);
-                                if(!fun){
-                                        perror(("EXPR|SUBR expected in core::eval\n"));
-                                        return nullptr;
-                                }
-                                fty = fun->type();
                                 if(fty!=Type::SUBR && fty!=Type::EXPR && fty!=Type::FEXPR && fty!=Type::MACRO){
                                         perror("Evaluating SExpression failed, cannot calcuate DottedPair, first atom != EXPR|SUBR\n");
                                         return nullptr;

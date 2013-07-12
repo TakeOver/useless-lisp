@@ -1,6 +1,7 @@
 #include "LispMachine.hpp"
 #include "subroutine.hpp"
 #include <iostream>
+#include <vector>
 namespace { using namespace Lazy;}
 #define BUILTIN_OP(name)\
 Lazy::SExpression* name(Lazy::LispState*ls,Lazy::DottedPair* args){\
@@ -316,6 +317,34 @@ SExpression* macrof(LispState * ls, DottedPair* args){
         return new Macro(body, argslist);
 
 }
+SExpression* list(LispState * ls, DottedPair* args){
+    std::vector<SExpression*> tmp;
+    while(args){
+        tmp.push_back(eval(ls,args->car()));
+        args = args->cdr();
+    }
+    DottedPair * res = nullptr;
+    for(auto i = tmp.rbegin(), e = tmp.rend(); i!=e;++i){
+        res = new DottedPair(*i,res);
+    }
+    return res;
+}
+SExpression* car(LispState * ls, DottedPair* args){
+    auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
+    if(!args){
+        perror("DottedPair expected in car\n");
+        return nullptr;
+    }
+    return arg->car();
+}
+SExpression* cdr(LispState * ls, DottedPair* args){
+    auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
+    if(!args){
+        perror("DottedPair expected in cdr\n");
+        return nullptr;
+    }
+    return arg->cdr();
+}
 extern SExpression* eval(LispState* ls, DottedPair* args);
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)
 void bind_builtin(Lazy::LispState *ls){
@@ -339,6 +368,9 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(lambda, ls);
         BIND_BUILTIN(macro, ls);
         BIND_BUILTIN(macrof, ls);
+        BIND_BUILTIN(list, ls);
+        BIND_BUILTIN(car, ls);
+        BIND_BUILTIN(cdr, ls);
         BIND_BUILTIN_ALIAS(macro!, macrof,ls);
         BIND_BUILTIN_ALIAS(set!, setq,ls);
         BIND_BUILTIN(lambdaf, ls);
