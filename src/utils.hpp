@@ -19,21 +19,82 @@ BUILTIN_OP(mul);
 //#define var(x) new Lazy::Variable(#x)
 #define dot(x,y) Lazy::DottedPair::make(x,y)
 #define num(x) new Lazy::Number(x)
-Lazy::SExpression* print(Lazy::LispState*ls,Lazy::DottedPair*args){
-        Lazy::SExpression* res = eval(ls,args->car());
+void _print(LispState*ls, SExpression* res){    
         if(!res){
-                std::cout << "nil\n";
-                return nullptr;
+                std::cout << "nil";
+                return;
+        } 
+        Lazy::DottedPair* func = nullptr;
+        switch(res->type()){
+        case Lazy::Type::NUMBER:
+                std::cout << ((Lazy::Number*)res)->get();
+                break;
+        case Lazy::Type::STRING:
+                std::cout << ((Lazy::String*)res)->get();
+                break;
+        case Lazy::Type::BOOLEAN:
+                std::cout << (((Lazy::Boolean*)res)->get()?"#t":"#f");
+                break;
+        case Lazy::Type::VARIABLE/*atom actually*/:
+                std::cout << (((Lazy::Variable*)res)->name);        
+                break;
+        case Lazy::Type::DOT:
+                {
+                        std::cout << "( ";
+                        auto iter = ((Lazy::DottedPair*)res);
+                        while(iter){
+                                _print(ls,iter->car());
+                                std::cout << ' ';
+                                iter = iter->cdr();
+                        }
+                        std::cout << ")";
+                }
+                break;
+        
+        case Lazy::Type::QUOT:
+                std::cout << '`';
+                _print(ls,res->Evaluate(ls, nullptr));
+                break;
+        case Lazy::Type::NIL: std::cout << "nil"; break;
+        case Lazy::Type::EXPR:
+                func = ((Lazy::Expression*)res)->get();
+                std::cout << "( lambda ";
+        case Lazy::Type::FEXPR: 
+                if(Lazy::Type::FEXPR == res->type()){
+                        func = (((Lazy::FExpression*)res)->get());
+                        std::cout << "( flambda ";
+                }
+        case Lazy::Type::MACRO:
+                if(Lazy::Type::MACRO == res->type()){
+                        func = (((Lazy::Macro*)res)->get());
+                        std::cout << "( macro ";
+                }
+                {
+                        _print(ls,func->car());
+                        std::cout << ' ';
+                        _print(ls,func->cdr()->car());
+                        std::cout << " )";
+                        delete func->cdr();
+                        delete func;
+                }
+                break;
+        case Lazy::Type::SUBR: std::cout << "(`subroutine)"; break;
         }
-        if(res->type() == Lazy::Type::NUMBER){
-                std::cout << ((Lazy::Number*)res)->get() << '\n';
+}
+Lazy::SExpression* print(Lazy::LispState*ls,Lazy::DottedPair*args){
+        Lazy::SExpression* res;
+        while(args){
+                res = eval(ls,args->car());
+                if(!res){
+                        std::cout << "nil\t";
+                        args = args->cdr();
+                        continue;
+                }
+                _print(ls,res);
+                std::cout << '\t';
+                args = args->cdr();
         }
-        if(res->type() == Lazy::Type::STRING){
-                std::cout << ((Lazy::String*)res)->get() << '\n';
-        }
-        if(res->type() == Lazy::Type::BOOLEAN){
-                std::cout << (((Lazy::Boolean*)res)->get()?"#t":"#f") << '\n';
-        }
+        std::cout << std::endl;
         return res;
 }
 

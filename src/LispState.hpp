@@ -32,7 +32,6 @@ namespace Lazy{
                 }
                 void setVariable(const std::string& name, SExpression* se, bool create = false){
                         if(passive && parent){
-                                std::cerr << "Writing " << name << " from passive\n";
                                 parent->setVariable(name, se,create);
                                 return;
                         } 

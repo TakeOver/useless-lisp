@@ -91,11 +91,7 @@ namespace Lazy{
                 Variable(const std::string& name, VarRef * cache = nullptr):name(name),cache(cache){}
 
                 virtual SExpression* Evaluate(EVAL_ARGS) override { 
-                        return  (       cache?
-                                                cache:
-                                                cache=ls->getVariable(name))?
-                                        cache->ref:
-                                        nullptr; 
+                        return  (ls->getVariable(name))->ref; 
                 }
                 virtual Type type() override { return Type::VARIABLE; }
         };
@@ -153,6 +149,7 @@ namespace Lazy{
                         return eval(state,func);
                 }
                 virtual Type type() override { return Type::EXPR; }
+                DottedPair * get(){ return new DottedPair(args, new DottedPair(func,nullptr));}
         };
         class FExpression: public SExpression{
                 DottedPair* func;
@@ -191,6 +188,7 @@ namespace Lazy{
                         return eval(state,func);
                 }
                 virtual Type type() override { return Type::FEXPR; }
+                DottedPair * get(){ return new DottedPair(args, new DottedPair(func,nullptr));}
         };
 
         class Macro: public SExpression{
@@ -230,6 +228,7 @@ namespace Lazy{
                         return eval(state,func);
                 }
                 virtual Type type() override { return Type::MACRO; }
+                DottedPair * get(){ return new DottedPair(args, new DottedPair(func,nullptr));}
         };
 
 
