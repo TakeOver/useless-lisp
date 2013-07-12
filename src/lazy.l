@@ -35,7 +35,7 @@ ANY             [a-zA-Z\+\-\*\/\$\%\^\&\!\?\,\~\:]+
 {TRUE}          { return TOKEN_TRUE; }
 {FALSE}         { return TOKEN_FALSE; }
 {ANY}           { yylval->str = new std::string(yytext);return ATOM;}
-({SEMICOLON}(.)*[\n])     {}
+{SEMICOLON}     { int c; while((c = yyinput(yyscanner))!=EOF && c && c!='\n'); }
 {WS}            { /* Skip blanks. */ } 
 {LPAREN}        { return TOKEN_LPAREN; }
 {RPAREN}        { return TOKEN_RPAREN; }
