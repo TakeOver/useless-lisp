@@ -16,40 +16,40 @@ namespace Lazy{
         }
         DottedPair* list(DottedPair* args) { return args; }
 
-        const Boolean* atom(SExpression* val){
+        Boolean* atom(LispState*, SExpression* val){
                 if(!val)return nullptr;
                 switch(val->type()){
                         using i = Type;
-                        case i::NUMBER: case i::STRING: case i::NIL: case i::BOOLEAN: return &ltrue;
-                        default: return &lfalse;
+                        case i::NUMBER: case i::STRING: case i::NIL: case i::BOOLEAN: return (Boolean*)&ltrue;
+                        default: return (Boolean*)&lfalse;
                 }
                 return nullptr;
         }
-        const Boolean* eq(SExpression* lhs, SExpression* rhs){
-                if(atom(lhs) && atom(rhs)){
+        Boolean* eq(LispState* ls, SExpression* lhs, SExpression* rhs){
+                if(atom(ls,lhs) && atom(ls,rhs)){
                         if(lhs->type()!=rhs->type())
-                                return &lfalse;
+                                return (Boolean*)&lfalse;
                         if(lhs->type() == Type::NUMBER){
-                                return static_cast<Number*>(lhs)->get() == static_cast<Number*>(rhs)->get()?&ltrue:&lfalse;
+                                return (Boolean*)(static_cast<Number*>(lhs)->get() == static_cast<Number*>(rhs)->get()?&ltrue:&lfalse);
                         }
                         if(lhs->type() == Type::STRING){
-                                return static_cast<String*>(lhs)->get() == static_cast<String*>(rhs)->get()?&ltrue:&lfalse;
+                                return (Boolean*)(static_cast<String*>(lhs)->get() == static_cast<String*>(rhs)->get()?&ltrue:&lfalse);
                         }
                         if(lhs->type() == Type::NIL){
-                                return &ltrue;
+                                return (Boolean*)&ltrue;
                         }
                         if(lhs->type() == Type::BOOLEAN){
-                                return static_cast<Boolean*>(lhs)->get() == static_cast<Boolean*>(rhs)->get()?&ltrue:&lfalse;
+                                return (Boolean*)(static_cast<Boolean*>(lhs)->get() == static_cast<Boolean*>(rhs)->get()?&ltrue:&lfalse);
                         }
                 }
-                return &lfalse;
+                return (Boolean*)&lfalse;
         }
-        const Boolean* neq(SExpression* lhs, SExpression * rhs){
-                return eq(lhs,rhs)==&ltrue?&lfalse:&ltrue;
+        Boolean* neq(LispState*ls, SExpression* lhs, SExpression * rhs){
+                return (Boolean*)(eq(ls,lhs,rhs)==&ltrue?&lfalse:&ltrue);
         }
-        const Boolean* null(SExpression* lhs){
-                if(!lhs || lhs->type() == Type::NIL)return &ltrue;
-                return &lfalse;
+        Boolean* null(SExpression* lhs){
+                if(!lhs || lhs->type() == Type::NIL)return (Boolean*)&ltrue;
+                return (Boolean*)&lfalse;
         }
         #define OP_MACRO(name,op,res) \
         res * name(LispState * ls,SExpression* lhs, SExpression* rhs){\
@@ -70,6 +70,6 @@ namespace Lazy{
         OP_MACRO(lt_num,<,Boolean);
         OP_MACRO(gt_num,>,Boolean);
         OP_MACRO(neq_num,!=,Boolean);
-        OP_MACRO(qe_num,==,Boolean);
-        #undef OP_MACRO
+        OP_MACRO(eq_num,==,Boolean);
+        #undef OP_MACRO    
 }

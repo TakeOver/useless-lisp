@@ -14,7 +14,10 @@
 (defmacro let (vars body) 
         ((lambda! (list (car vars)) body) 
         (car (cdr vars))))
-(defmacro if (condition then else) (cond! (list condition then) (list #t else)))
+(defmacro if (condition then else) 
+        (cond! 
+                (list condition then) 
+                (list #t else)))
 
 ; examples
 (let (a 10) 

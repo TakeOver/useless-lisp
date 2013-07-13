@@ -15,6 +15,15 @@ BUILTIN_OP(add);
 BUILTIN_OP(sub);
 BUILTIN_OP(div);
 BUILTIN_OP(mul);
+BUILTIN_OP(gt_num);
+BUILTIN_OP(lt_num);
+BUILTIN_OP(ge_num);
+BUILTIN_OP(le_num);
+BUILTIN_OP(eq_num);
+BUILTIN_OP(neq_num);
+BUILTIN_OP(eq);
+BUILTIN_OP(neq);
+BUILTIN_OP(cons);
 
 #define BIND_BUILTIN(name,ls) ls->setVariable(#name,new Lazy::Subroutine(name),true)
 //#define var(x) new Lazy::Variable(#x)
@@ -53,7 +62,7 @@ void _print(LispState*ls, SExpression* res){
                 break;
         
         case Lazy::Type::QUOT:
-                std::cout << '`';
+                std::cout << '\'';
                 _print(ls,res->Evaluate(ls, nullptr));
                 break;
         case Lazy::Type::NIL: std::cout << "nil"; break;
@@ -329,6 +338,18 @@ SExpression* list(LispState * ls, DottedPair* args){
         }
         return res;
 }
+SExpression* quote(LispState * ls, DottedPair* args){
+        std::vector<SExpression*> tmp;
+        while(args){
+                tmp.push_back((args->car()));
+                args = args->cdr();
+        }
+        DottedPair * res = nullptr;
+        for(auto i = tmp.rbegin(), e = tmp.rend(); i!=e;++i){
+                res = new DottedPair(*i,res);
+        }
+        return res;
+}
 SExpression* car(LispState * ls, DottedPair* args){
         auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
         if(!args){
@@ -387,6 +408,61 @@ SExpression* condf(LispState * ls, DottedPair* args){
         }
         return nullptr;
 }
+SExpression* loop(LispState * ls, DottedPair* args){
+        auto cond = args->car();
+        auto _body = args->cdr();
+        if(!cond || !_body){
+                perror("Incorrect args in loop subr\n");
+                return nullptr;
+        }
+        auto body = _body->car();
+        SExpression * res = nullptr;
+        while(true){
+                auto condres = eval(ls,cond);
+                if(!condres){
+                        break;
+                }
+                auto boolcondres = dynamic_cast<Boolean*>(condres);
+                if(!boolcondres){
+                        break;
+                }
+                if(!*boolcondres){
+                        break;
+                }
+                res = eval(ls,body);
+        }
+        return res;
+
+}
+SExpression* loopf(LispState * ls, DottedPair* args){
+        auto cond = eval(ls,args->car());
+        auto _body = args->cdr();
+        if(!cond || !_body){
+                perror("Incorrect args in loopf subr\n");
+                return nullptr;
+        }
+        auto body = eval(ls,_body->car());
+        if(!body){
+                perror("Incorrect args in loopf subr\n");
+        }
+        SExpression * res = nullptr;
+        while(true){
+                auto condres = eval(ls,cond);
+                if(!condres){
+                        break;
+                }
+                auto boolcondres = dynamic_cast<Boolean*>(condres);
+                if(!boolcondres){
+                        break;
+                }
+                if(!*boolcondres){
+                        break;
+                }
+                res = eval(ls,body);
+        }
+        return res;
+
+}
 extern SExpression* eval(LispState* ls, DottedPair* args);
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)
 void bind_builtin(Lazy::LispState *ls){
@@ -394,6 +470,21 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(div, ls);
         BIND_BUILTIN(sub, ls);
         BIND_BUILTIN(mul, ls);
+        BIND_BUILTIN(gt_num,ls);
+        BIND_BUILTIN(lt_num,ls);
+        BIND_BUILTIN(ge_num,ls);
+        BIND_BUILTIN(le_num,ls);
+        BIND_BUILTIN(eq_num,ls);
+        BIND_BUILTIN(neq_num,ls);
+        BIND_BUILTIN_ALIAS(>, gt_num,ls);
+        BIND_BUILTIN_ALIAS(<, lt_num,ls);
+        BIND_BUILTIN_ALIAS(<=, le_num,ls);
+        BIND_BUILTIN_ALIAS(>=, gt_num,ls);
+        BIND_BUILTIN_ALIAS(==, eq_num,ls);
+        BIND_BUILTIN_ALIAS(!=, neq_num,ls);
+        BIND_BUILTIN(eq,ls);
+        BIND_BUILTIN(neq,ls);
+        BIND_BUILTIN(cons,ls);
         BIND_BUILTIN_ALIAS(*, mul,ls);
         BIND_BUILTIN_ALIAS(/, div,ls);
         BIND_BUILTIN_ALIAS(+, add,ls);
@@ -405,7 +496,8 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(set, ls);
         BIND_BUILTIN(exit, ls);
         BIND_BUILTIN(tonum, ls);
-        BIND_BUILTIN(read, ls);        
+        BIND_BUILTIN(read, ls);    
+        BIND_BUILTIN(quote, ls);         
         BIND_BUILTIN(eval, ls);       
         BIND_BUILTIN(cond, ls);      
         BIND_BUILTIN(lambda, ls);
@@ -413,6 +505,9 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(macrof, ls);
         BIND_BUILTIN(list, ls);
         BIND_BUILTIN(car, ls);
+        BIND_BUILTIN(loop, ls);
+        BIND_BUILTIN(loopf, ls);
+        BIND_BUILTIN_ALIAS(loop!, loopf,ls);
         BIND_BUILTIN(cdr, ls);
         BIND_BUILTIN(progn, ls);
         BIND_BUILTIN_ALIAS(macro!, macrof,ls);
