@@ -318,32 +318,74 @@ SExpression* macrof(LispState * ls, DottedPair* args){
 
 }
 SExpression* list(LispState * ls, DottedPair* args){
-    std::vector<SExpression*> tmp;
-    while(args){
-        tmp.push_back(eval(ls,args->car()));
-        args = args->cdr();
-    }
-    DottedPair * res = nullptr;
-    for(auto i = tmp.rbegin(), e = tmp.rend(); i!=e;++i){
-        res = new DottedPair(*i,res);
-    }
-    return res;
+        std::vector<SExpression*> tmp;
+        while(args){
+                tmp.push_back(eval(ls,args->car()));
+                args = args->cdr();
+        }
+        DottedPair * res = nullptr;
+        for(auto i = tmp.rbegin(), e = tmp.rend(); i!=e;++i){
+                res = new DottedPair(*i,res);
+        }
+        return res;
 }
 SExpression* car(LispState * ls, DottedPair* args){
-    auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
-    if(!args){
-        perror("DottedPair expected in car\n");
-        return nullptr;
-    }
-    return arg->car();
+        auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
+        if(!args){
+                perror("DottedPair expected in car\n");
+                return nullptr;
+        }
+        return arg->car();
 }
 SExpression* cdr(LispState * ls, DottedPair* args){
-    auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
-    if(!args){
-        perror("DottedPair expected in cdr\n");
+        auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
+        if(!args){
+                perror("DottedPair expected in cdr\n");
+                return nullptr;
+        }
+        return arg->cdr();
+}
+SExpression* progn(LispState * ls, DottedPair* args){
+        SExpression* res;
+        while(args){
+                res = eval(ls,args->car());
+                args = args->cdr();
+        }
+        return res;
+}
+SExpression* cond(LispState * ls, DottedPair* args){
+        while(args){
+                auto cond_pair = dynamic_cast<DottedPair*>(args->car());
+                if(!cond_pair){
+                        perror("DottedPair expected in cond\n");
+                        return nullptr;
+                }
+                SExpression* expr;
+                auto val = dynamic_cast<Boolean*>(expr=eval(ls,cond_pair->car()));
+                if((val && *val) || (val == nullptr && !*null(expr))){
+                        /*true*/
+                        return eval(ls,cond_pair->cdr()->car());
+                }
+                args = args->cdr();
+        }
         return nullptr;
-    }
-    return arg->cdr();
+}
+SExpression* condf(LispState * ls, DottedPair* args){
+        while(args){
+                auto cond_pair = dynamic_cast<DottedPair*>(eval(ls,args->car()));
+                if(!cond_pair){
+                        perror("DottedPair expected in cond\n");
+                        return nullptr;
+                }
+                SExpression* expr;
+                auto val = dynamic_cast<Boolean*>(expr=eval(ls,cond_pair->car()));
+                if(*val || (val == nullptr && (expr))){
+                        /*true*/
+                        return eval(ls,cond_pair->cdr()->car());
+                }
+                args = args->cdr();
+        }
+        return nullptr;
 }
 extern SExpression* eval(LispState* ls, DottedPair* args);
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)
@@ -364,14 +406,18 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(exit, ls);
         BIND_BUILTIN(tonum, ls);
         BIND_BUILTIN(read, ls);        
-        BIND_BUILTIN(eval, ls);      
+        BIND_BUILTIN(eval, ls);       
+        BIND_BUILTIN(cond, ls);      
         BIND_BUILTIN(lambda, ls);
         BIND_BUILTIN(macro, ls);
         BIND_BUILTIN(macrof, ls);
         BIND_BUILTIN(list, ls);
         BIND_BUILTIN(car, ls);
         BIND_BUILTIN(cdr, ls);
+        BIND_BUILTIN(progn, ls);
         BIND_BUILTIN_ALIAS(macro!, macrof,ls);
+        BIND_BUILTIN(condf, ls);
+        BIND_BUILTIN_ALIAS(cond!, condf,ls);
         BIND_BUILTIN_ALIAS(set!, setq,ls);
         BIND_BUILTIN(lambdaf, ls);
         BIND_BUILTIN_ALIAS(lambda!, lambdaf,ls);    
@@ -380,5 +426,11 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN_ALIAS(flambda!, lambdaf,ls);
         BIND_BUILTIN(varf, ls);
         BIND_BUILTIN_ALIAS(var!,varf,ls);
+        extern SExpression* eval(LispState*,const char*);
         ls->setVariable("nil", nullptr);
+        eval(ls,"(var defmacro (macro (name args body)(var! name(macro! args body))))\
+                (defmacro defun (name args body)(var! name(lambda! args body)))\
+                (defmacro defunf (name args body)(var! name(flambda! args body)))\
+                (defmacro let (vars body)((lambda! (list (car vars)) body)(car (cdr vars))))\
+                (defmacro if (c t e) (cond! (list c t) (list #t e)))");
 }

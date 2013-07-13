@@ -1776,6 +1776,7 @@ int main(){
         bind_builtin(ls);
         std::vector<SExpression*>res;
         yyscan_t scanner;
+        
         YY_BUFFER_STATE state;
         if (yylex_init(&scanner)) {
                 // couldn't initialize

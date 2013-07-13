@@ -55,6 +55,7 @@ namespace Lazy{
                 virtual Type type() override { return Type::BOOLEAN; }
                 decltype(value)& get() { return value; }
                 operator bool(){ return value; }
+                operator bool()const{ return value; }
         };
 
         class DottedPair: public SExpression{
