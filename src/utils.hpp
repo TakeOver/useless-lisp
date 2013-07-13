@@ -408,6 +408,20 @@ SExpression* condf(LispState * ls, DottedPair* args){
         }
         return nullptr;
 }
+SExpression* append(LispState * ls, DottedPair* args){
+        SExpression * expr;
+        auto list = dynamic_cast<DottedPair*>(expr= eval(ls,args->car()));
+        auto what = args->cdr();
+        if(!what){
+                perror("Value expected in append subroutine\n");
+                return nullptr;
+        }
+        if(!list){
+                return new DottedPair(expr,new DottedPair(eval(ls,what->car())));
+        }
+        list->append(eval(ls,what->car()));
+        return list;
+}
 SExpression* loop(LispState * ls, DottedPair* args){
         auto cond = args->car();
         auto _body = args->cdr();
@@ -497,7 +511,8 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(exit, ls);
         BIND_BUILTIN(tonum, ls);
         BIND_BUILTIN(read, ls);    
-        BIND_BUILTIN(quote, ls);         
+        BIND_BUILTIN(quote, ls);    
+        BIND_BUILTIN(append, ls);          
         BIND_BUILTIN(eval, ls);       
         BIND_BUILTIN(cond, ls);      
         BIND_BUILTIN(lambda, ls);

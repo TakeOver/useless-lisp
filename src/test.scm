@@ -37,5 +37,26 @@
 
 ;also
 (defun repl (a) 
-        (repl (print 'repl: (eval(read)))))
+        (repl 
+                (print (list (quote lisp)) 
+                (eval(read)))))
 ; call as (repl nil)
+(defun map (what aggregate)
+        (if (null what) 
+                nil
+                (progn
+                        (var tmp (aggregate (car what)))
+                        (set! what (cdr what))
+                        (loop (null what)
+                                (progn
+                                        (append tmp (aggregate(car what)))
+                                        (set! what (cdr what))))
+                        tmp)))
+
+(defmacro let (vars body) 
+        (progn 
+                (var vars_(eval vars)) 
+                ((lambda! (map vars_ (lambda (x)(car x))) body) 
+                        (map vars_ (lambda(x) (car (cdr x)))))))
+; creating lambda for new scope, vars - ( (a (expr) (b (expr ).. so on))), so with calling map - this macro changes
+; (let ((a 10) (b 11)) (print (+ a b))) => ((lambda (a b)) (print ( + a b))) 10 11) ; and this is awesome!
