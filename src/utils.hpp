@@ -290,7 +290,7 @@ SExpression* flambdaf(LispState * ls, DottedPair* args){
 }
 SExpression* macro(LispState * ls, DottedPair* args){
         auto argslist = dynamic_cast<DottedPair*>(args->car());
-        if(!argslist){
+        if(!argslist && args->car()){
                 perror("Argslist expected in macro expression\n");
                 std::cerr << (int) args->car()->type()<< '\n';
                 return nullptr;
@@ -309,7 +309,7 @@ SExpression* macro(LispState * ls, DottedPair* args){
 }
 SExpression* macrof(LispState * ls, DottedPair* args){
         auto argslist = dynamic_cast<DottedPair*>(args->car()->Evaluate(ls, nullptr));
-        if(!argslist){
+        if(!argslist && args->car()){
                 perror("Argslist expected in macro expression\n");
                 std::cerr << (int) args->car()->type()<< '\n';
                 return nullptr;
@@ -400,7 +400,7 @@ SExpression* condf(LispState * ls, DottedPair* args){
                 }
                 SExpression* expr;
                 auto val = dynamic_cast<Boolean*>(expr=eval(ls,cond_pair->car()));
-                if(*val || (val == nullptr && (expr))){
+                if((val && *val) || (val == nullptr && (expr))){
                         /*true*/
                         return eval(ls,cond_pair->cdr()->car());
                 }
@@ -437,10 +437,7 @@ SExpression* loop(LispState * ls, DottedPair* args){
                         break;
                 }
                 auto boolcondres = dynamic_cast<Boolean*>(condres);
-                if(!boolcondres){
-                        break;
-                }
-                if(!*boolcondres){
+                if(boolcondres && !*boolcondres){
                         break;
                 }
                 res = eval(ls,body);
@@ -477,6 +474,59 @@ SExpression* loopf(LispState * ls, DottedPair* args){
         return res;
 
 }
+SExpression* funcall(LispState * ls, DottedPair* args){
+        auto fun = eval(ls,args->car());
+        if(!fun){
+                perror("Function expected in funcall\n");
+                return nullptr;
+        }
+        args = args->cdr();
+        if(!args){
+                perror("Args expected in funcall\n");
+                return nullptr;
+        }
+        auto arg = dynamic_cast<DottedPair*>(eval(ls,args->car()));
+        if(!arg){
+                perror("Argslist expected in funcall\n");
+                return nullptr;
+        }
+        auto fty = fun->type();
+        if(fty!=Type::SUBR && fty!=Type::EXPR && fty!=Type::FEXPR && fty!=Type::MACRO){
+                perror("Evaluating SExpression failed, cannot call function, first atom != EXPR|SUBR\n");
+                return nullptr;
+        }
+        return fun->Evaluate(ls,arg);
+
+}
+SExpression* funcallf(LispState * ls, DottedPair* args){
+        auto fun = eval(ls,args->car());
+        if(!fun){
+                perror("Function expected in funcall\n");
+                return nullptr;
+        }
+        args = args->cdr();
+        if(!args){
+                perror("Args expected in funcall\n");
+                return nullptr;
+        }
+        auto arg = dynamic_cast<DottedPair*>((args->car()));
+        if(!arg){
+                perror("Argslist expected in funcall\n");
+                return nullptr;
+        }
+        auto fty = fun->type();
+        if(fty!=Type::SUBR && fty!=Type::EXPR && fty!=Type::FEXPR && fty!=Type::MACRO){
+                perror("Evaluating SExpression failed, cannot call function, first atom != EXPR|SUBR\n");
+                return nullptr;
+        }
+        return fun->Evaluate(ls,arg);
+
+}
+SExpression* null(LispState * ls, DottedPair* args){
+        auto lhs = eval(ls,args->car());
+        return null(lhs);
+
+}
 extern SExpression* eval(LispState* ls, DottedPair* args);
 #define BIND_BUILTIN_ALIAS(x,y,z) z->setVariable(#x,z->getVariable(#y)->ref,true)
 void bind_builtin(Lazy::LispState *ls){
@@ -490,6 +540,8 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(le_num,ls);
         BIND_BUILTIN(eq_num,ls);
         BIND_BUILTIN(neq_num,ls);
+        BIND_BUILTIN(null,ls);
+        BIND_BUILTIN_ALIAS(null?, null,ls);
         BIND_BUILTIN_ALIAS(>, gt_num,ls);
         BIND_BUILTIN_ALIAS(<, lt_num,ls);
         BIND_BUILTIN_ALIAS(<=, le_num,ls);
@@ -499,6 +551,9 @@ void bind_builtin(Lazy::LispState *ls){
         BIND_BUILTIN(eq,ls);
         BIND_BUILTIN(neq,ls);
         BIND_BUILTIN(cons,ls);
+        BIND_BUILTIN(funcall,ls);
+        BIND_BUILTIN(funcallf,ls);
+        BIND_BUILTIN_ALIAS(funcall!, funcallf,ls);
         BIND_BUILTIN_ALIAS(*, mul,ls);
         BIND_BUILTIN_ALIAS(/, div,ls);
         BIND_BUILTIN_ALIAS(+, add,ls);
@@ -542,5 +597,8 @@ void bind_builtin(Lazy::LispState *ls){
                 (defmacro defun (name args body)(var! name(lambda! args body)))\
                 (defmacro defunf (name args body)(var! name(flambda! args body)))\
                 (defmacro let (vars body)((lambda! (list (car vars)) body)(car (cdr vars))))\
-                (defmacro if (c t e) (cond! (list c t) (list #t e)))");
+                (defmacro if (c t e) (cond! (list c t) (list #t e)))\
+                (defun _map (f w) (progn (var tmp (list (f (car w)))) (set! w (cdr w))(loop w (progn (set! tmp (append tmp (f (car w)))) (set! w (cdr w))))tmp))\
+                (defun map (f w)(if w (_map f w) nil))\
+                (defmacro _let (vars body)(progn(var vars_(eval(eval vars)))(funcall (lambda! (map (lambda (x) (car x)) vars_) body)(map (lambda (x) (car (cdr x)))vars_))))");
 }

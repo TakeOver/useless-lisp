@@ -54,8 +54,8 @@ namespace Lazy{
                 virtual SExpression* Evaluate(EVAL_ARGS) override { return this; }
                 virtual Type type() override { return Type::BOOLEAN; }
                 decltype(value)& get() { return value; }
-                operator bool(){ return value; }
-                operator bool()const{ return value; }
+                operator bool(){ return this?false:value; }
+                operator bool()const{ return this?false:value; }
         };
 
         class DottedPair: public SExpression{
@@ -74,7 +74,7 @@ namespace Lazy{
                 DottedPair* cdr() { return next; }
                 DottedPair* append(SExpression* elem){
                         DottedPair* end = this->last();
-                                end->next = new DottedPair(elem,nullptr);
+                        end->next = new DottedPair(elem,nullptr);
                         return this;
                 }
                 DottedPair* last() { 
@@ -82,6 +82,7 @@ namespace Lazy{
                         while(iter->next!=nullptr)iter = iter->next;
                         return iter;
                 }
+                bool empty()const{return !value && !next;}
         };
 
         class Variable: public SExpression{
@@ -92,7 +93,11 @@ namespace Lazy{
                 Variable(const std::string& name, VarRef * cache = nullptr):name(name),cache(cache){}
 
                 virtual SExpression* Evaluate(EVAL_ARGS) override { 
-                        return  (ls->getVariable(name))->ref; 
+                        std::cerr << "Gettind var:" << name << '\n';
+                        auto variable = (ls->getVariable(name));
+                        if(!variable)
+                                return nullptr;
+                        return variable->ref; 
                 }
                 virtual Type type() override { return Type::VARIABLE; }
         };
@@ -119,11 +124,11 @@ namespace Lazy{
                 LispState *ctx;
         public:
                 virtual ~Expression(){}
-                Expression(DottedPair *func,DottedPair* args, LispState* ctx=nullptr):func(func),args(args),ctx(ctx){}
+                Expression(DottedPair *func,DottedPair* args, LispState* ctx=nullptr):func(func),args(args->empty()?nullptr:args),ctx(ctx){}
 
                 virtual SExpression* Evaluate(EVAL_ARGS) override {
                         LispState * state = new LispState(ctx);
-                        if(!se || se->type()!=Type::DOT){
+                        if((!se || se->type()!=Type::DOT) && args && !args->empty()){
                                 perror("DottedPair expected as func asrgs list\n");
                                 return nullptr;
                         }
